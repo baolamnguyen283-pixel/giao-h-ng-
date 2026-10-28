@@ -4,58 +4,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Thành Phố Giao Hàng 2D 🛵</title>
+<title>Giao Hàng Thành Phố 2D 🛵</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#172538;color:#fff;font-family:Arial,sans-serif;overflow:hidden}
-header{height:62px;background:#20344b;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;gap:8px}
-h1{font-size:clamp(16px,3vw,25px);margin:0;color:#ffe18b}
-.stats{display:flex;gap:14px;font-weight:bold;font-size:14px;flex-wrap:wrap}
-#wrap{position:relative;width:100vw;height:calc(100dvh - 62px);min-height:350px}
-canvas{display:block;width:100%;height:100%;touch-action:none}
-#mission{position:absolute;top:12px;left:12px;background:#172538eF;border:1px solid #60758b;border-radius:13px;padding:12px 15px;width:min(245px,48vw);font-size:13px;line-height:1.6;pointer-events:none}
+body{margin:0;background:#172538;color:white;font-family:Arial,sans-serif;overflow:hidden}
+header{height:64px;background:#20344b;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;gap:8px}
+h1{font-size:clamp(16px,3vw,24px);margin:0;color:#ffe18b}
+.stats{display:flex;gap:13px;flex-wrap:wrap;font-size:14px}
+#wrap{position:relative;width:100vw;height:calc(100dvh - 64px)}
+#game{display:block;width:100%;height:100%;touch-action:none}
+#mission{position:absolute;top:12px;left:12px;background:#172538ee;border:1px solid #60758b;border-radius:12px;padding:12px;width:min(235px,48vw);font-size:13px;line-height:1.7;pointer-events:none}
 #mission b{color:#ffe18b}
-#map{position:absolute;right:12px;top:12px;width:145px;height:110px;background:#fff;border:3px solid white;border-radius:10px}
-#hint{position:absolute;top:132px;right:12px;background:#172538d9;padding:8px;border-radius:8px;font-size:12px;max-width:155px}
-#toast{position:absolute;left:50%;top:18px;transform:translateX(-50%);background:#173c32;color:#fff4bd;padding:12px 18px;border-radius:12px;font-weight:bold;display:none;text-align:center;max-width:80%;pointer-events:none}
-#controls{position:absolute;bottom:16px;left:16px;display:grid;grid-template-columns:repeat(3,54px);grid-template-rows:repeat(2,50px);gap:5px}
-#controls button{border:1px solid #fff8;background:#263d55eF;color:white;border-radius:12px;font-size:23px;touch-action:none}
+#map{position:absolute;top:12px;right:12px;width:145px;height:110px;border:3px solid white;border-radius:10px;background:#8fbd7d}
+#hint{position:absolute;right:12px;top:132px;background:#172538e8;padding:9px;border-radius:9px;font-size:12px}
+#toast{display:none;position:absolute;left:50%;top:18px;transform:translateX(-50%);background:#173c32;color:#fff4bd;padding:12px 18px;border-radius:12px;font-weight:bold;text-align:center;max-width:85%;pointer-events:none}
+#controls{position:absolute;bottom:14px;left:14px;display:grid;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(2,48px);gap:5px}
+#controls button{border:1px solid #ffffff80;background:#263d55ed;color:white;border-radius:12px;font-size:23px;touch-action:none}
 #up{grid-column:2}#left{grid-column:1;grid-row:2}#down{grid-column:2;grid-row:2}#right{grid-column:3;grid-row:2}
-#actions{position:absolute;bottom:18px;right:14px;display:flex;flex-direction:column;gap:8px}
-button.action{background:#ffcf62;color:#243247;border:0;border-radius:12px;padding:12px;font-weight:bold;font-size:14px}
+#actions{position:absolute;bottom:16px;right:14px;display:flex;flex-direction:column;gap:8px}
+.action{background:#ffcf62;color:#243247;border:0;border-radius:12px;padding:12px;font-weight:bold;font-size:14px}
 #start{position:absolute;inset:0;background:#122235dd;display:flex;align-items:center;justify-content:center;padding:16px}
 .panel{background:#20374f;border:2px solid #7189a0;border-radius:22px;padding:24px;width:min(410px,94vw);text-align:center;box-shadow:0 12px 50px #0006}
 .panel h2{color:#ffe18b;margin-top:0}
-.panel p{line-height:1.6;color:#e0eaf2}
+.panel p{line-height:1.65;color:#e0eaf2}
 .panel button{background:#ffcf62;border:0;border-radius:12px;padding:14px 24px;font-size:17px;font-weight:bold}
 @media(max-width:600px){
- header{height:74px;align-items:flex-start;flex-direction:column;justify-content:center;gap:5px;padding:7px 10px}
- .stats{font-size:12px;gap:12px}
- #wrap{height:calc(100dvh - 74px)}
+ header{height:76px;align-items:flex-start;flex-direction:column;justify-content:center;gap:5px;padding:7px 10px}
+ .stats{font-size:12px;gap:10px}
+ #wrap{height:calc(100dvh - 76px)}
  #mission{top:8px;left:8px;padding:8px;font-size:11px;width:155px}
  #map{width:100px;height:78px;right:8px;top:8px}
- #hint{top:92px;right:8px;font-size:10px;max-width:110px}
- #controls{left:9px;bottom:10px;grid-template-columns:repeat(3,46px);grid-template-rows:repeat(2,43px)}
+ #hint{top:92px;right:8px;font-size:10px}
+ #controls{left:8px;bottom:9px;grid-template-columns:repeat(3,45px);grid-template-rows:repeat(2,42px)}
  #controls button{font-size:19px}
- #actions{right:9px;bottom:10px}
- button.action{font-size:12px;padding:10px}
+ #actions{right:8px;bottom:9px}
+ .action{font-size:12px;padding:10px}
 }
 </style>
 </head>
 <body>
 <header>
-<h1>🏙️ Thành Phố Giao Hàng 2D</h1>
+<h1>🏙️ Giao Hàng 2D</h1>
 <div class="stats">
 <span>📦 Đơn: <b id="orders">0</b>/10</span>
 <span>💰 Tiền: <b id="money">0</b>k</span>
 <span>⭐ Điểm: <b id="score">0</b></span>
 </div>
 </header>
+
 <div id="wrap">
 <canvas id="game"></canvas>
-<div id="mission">🛵 <b>NHIỆM VỤ</b><br><span id="task">Nhận gói hàng màu vàng!</span><br>Điểm giao: <b id="destination">Chưa có</b></div>
+<div id="mission">
+<b>🛵 NHIỆM VỤ</b><br>
+<span id="task">Nhận gói hàng màu vàng!</span><br>
+Điểm giao: <b id="destination">Chưa có</b>
+</div>
 <canvas id="map"></canvas>
-<div id="hint">⌨️ WASD / phím mũi tên<br>🚦 Né các tòa nhà nhé!</div>
+<div id="hint">⌨️ WASD / phím mũi tên<br>🚗 Né xe đang chạy!</div>
 <div id="toast"></div>
 <div id="controls">
 <button id="up" data-key="ArrowUp">⬆️</button>
@@ -69,251 +74,445 @@ button.action{background:#ffcf62;color:#243247;border:0;border-radius:12px;paddi
 </div>
 <div id="start">
 <div class="panel">
-<h2>🛵 GIAO HÀNG THÀNH PHỐ</h2>
-<p>Khám phá thành phố rộng lớn, nhận hàng và giao tận nơi để kiếm tiền!</p>
-<p>🗺️ Bản đồ lớn · 🏢 Nhiều khu phố<br>📦 10 đơn hàng · 💰 Thưởng 20k/đơn</p>
-<p>Điều khiển bằng WASD, phím mũi tên hoặc các nút trên màn hình.</p>
+<h2 id="startTitle">🛵 GIAO HÀNG THÀNH PHỐ</h2>
+<p id="startText">Khám phá thành phố rộng lớn, nhận hàng và giao đến nơi để kiếm tiền.</p>
+<p>🏙️ Bản đồ rộng · 🚗 Xe cộ lưu thông<br>📦 Giao 10 đơn · 💰 Thưởng 20k/đơn</p>
+<p>Né xe cộ! Đâm trúng xe khác là thua.</p>
 <button id="play">BẮT ĐẦU CHƠI ▶</button>
 </div>
 </div>
 </div>
+
 <script>
 (()=>{
 const canvas=document.getElementById('game');
 const ctx=canvas.getContext('2d');
 const mini=document.getElementById('map');
 const mctx=mini.getContext('2d');
+
 const WORLD={w:3200,h:2600};
-const ROAD=180, BLOCK=420, STEP=ROAD+BLOCK;
+const ROAD=180,BLOCK=420,STEP=ROAD+BLOCK;
 const keys={};
-let player,buildings,packagePos,target,carrying,orders,money,score,running,won;
-let camera={x:0,y:0};
-let toastUntil=0,last=0;
-let brake=false;
-const rand=(a,b)=>a+Math.random()*(b-a);
-const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+let player,buildings,traffic,packagePos,target;
+let carrying=false,orders=0,money=0,score=0;
+let running=false,gameOver=false,won=false,brake=false;
+let camera={x:0,y:0},last=0,toastUntil=0;
+
+const colors=['#f2b5a7','#d6c4f0','#a9d6cc','#f1d79b','#b6d2ef','#edc8a5'];
+const carColors=['#ff6262','#ffd166','#8b7bff','#eeeeee','#35c9a5','#ff9f43'];
+
 function resize(){
-const dpr=Math.min(window.devicePixelRatio||1,2);
-canvas.width=Math.round(canvas.clientWidth*dpr);
-canvas.height=Math.round(canvas.clientHeight*dpr);
-ctx.setTransform(dpr,0,0,dpr,0,0);
-mini.width=Math.round(mini.clientWidth*dpr);
-mini.height=Math.round(mini.clientHeight*dpr);
-mctx.setTransform(dpr,0,0,dpr,0,0);
+ const dpr=Math.min(window.devicePixelRatio||1,2);
+ canvas.width=Math.round(canvas.clientWidth*dpr);
+ canvas.height=Math.round(canvas.clientHeight*dpr);
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+ mini.width=Math.round(mini.clientWidth*dpr);
+ mini.height=Math.round(mini.clientHeight*dpr);
+ mctx.setTransform(dpr,0,0,dpr,0,0);
 }
 window.addEventListener('resize',resize);
-function roadPoint(){
-const vertical=Math.random()<.5;
-if(vertical){
-const x=ROAD/2+Math.floor(Math.random()*(WORLD.w/STEP))*STEP;
-return {x:Math.min(x,WORLD.w-40),y:rand(40,WORLD.h-40)};
-}
-const y=ROAD/2+Math.floor(Math.random()*(WORLD.h/STEP))*STEP;
-return {x:rand(40,WORLD.w-40),y:Math.min(y,WORLD.h-40)};
-}
+
+function distance(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+
 function makeBuildings(){
-buildings=[];
-for(let x=ROAD+10;x<WORLD.w-BLOCK;x+=STEP){
-for(let y=ROAD+10;y<WORLD.h-BLOCK;y+=STEP){
-const colors=['#f2b5a7','#d6c4f0','#a9d6cc','#f1d79b','#b6d2ef','#edc8a5'];
-for(let i=0;i<5;i++){
-let bx=x+25+(i%2)*170+rand(-8,15);
-let by=y+20+Math.floor(i/2)*125+rand(-8,10);
-let bw=105+rand(0,35),bh=80+rand(0,35);
-buildings.push({x:bx,y:by,w:bw,h:bh,color:colors[Math.floor(rand(0,colors.length))],seed:Math.random()});
+ buildings=[];
+ for(let x=ROAD+10;x<WORLD.w-BLOCK;x+=STEP){
+  for(let y=ROAD+10;y<WORLD.h-BLOCK;y+=STEP){
+   for(let i=0;i<5;i++){
+    buildings.push({
+     x:x+25+(i%2)*170,
+     y:y+20+Math.floor(i/2)*125,
+     w:105+Math.random()*35,
+     h:80+Math.random()*35,
+     color:colors[Math.floor(Math.random()*colors.length)]
+    });
+   }
+  }
+ }
 }
+
+function roadPoint(){
+ if(Math.random()<0.5){
+  const lane=Math.floor(Math.random()*Math.ceil(WORLD.w/STEP));
+  return {x:Math.min(lane*STEP+ROAD/2,WORLD.w-30),y:40+Math.random()*(WORLD.h-80)};
+ }
+ const lane=Math.floor(Math.random()*Math.ceil(WORLD.h/STEP));
+ return {x:40+Math.random()*(WORLD.w-80),y:Math.min(lane*STEP+ROAD/2,WORLD.h-30)};
 }
-}
-}
-function freePoint(){
-for(let i=0;i<100;i++){
-const p=roadPoint();
-if(!blocked(p.x,p.y,15))return p;
-}
-return {x:90,y:90};
-}
+
 function blocked(x,y,r){
-if(x<r||y<r||x>WORLD.w-r||y>WORLD.h-r)return true;
-return buildings.some(b=>x+r>b.x&&x-r<b.x+b.w&&y+r>b.y&&y-r<b.y+b.h);
+ if(x<r||y<r||x>WORLD.w-r||y>WORLD.h-r)return true;
+ return buildings.some(b=>
+  x+r>b.x&&x-r<b.x+b.w&&y+r>b.y&&y-r<b.y+b.h
+ );
 }
+
+function freePoint(){
+ for(let i=0;i<150;i++){
+  const p=roadPoint();
+  if(!blocked(p.x,p.y,18))return p;
+ }
+ return {x:ROAD/2,y:ROAD/2};
+}
+
+function makeTraffic(){
+ traffic=[];
+ for(let i=0;i<24;i++){
+  const vertical=Math.random()<0.5;
+  const lane=Math.floor(Math.random()*(vertical?
+   Math.ceil(WORLD.w/STEP):Math.ceil(WORLD.h/STEP)));
+  traffic.push({
+   vertical,
+   x:vertical?Math.min(lane*STEP+ROAD/2,WORLD.w-30):Math.random()*WORLD.w,
+   y:vertical?Math.random()*WORLD.h:Math.min(lane*STEP+ROAD/2,WORLD.h-30),
+   dir:Math.random()<0.5?1:-1,
+   speed:90+Math.random()*85,
+   color:carColors[i%carColors.length],
+   w:43,h:25
+  });
+ }
+}
+
 function reset(){
-makeBuildings();
-player={x:90,y:90,angle:0};
-camera={x:0,y:0};
-packagePos=freePoint();
-target=freePoint();
-while(dist(target,packagePos)<500)target=freePoint();
-carrying=false;orders=0;money=0;score=0;won=false;running=false;
-document.getElementById('start').style.display='flex';
-document.getElementById('task').textContent='Nhận gói hàng màu vàng!';
-document.getElementById('destination').textContent='Chưa có';
-updateStats();
+ makeBuildings();
+ makeTraffic();
+ player={x:ROAD/2,y:ROAD/2,angle:0};
+ camera={x:0,y:0};
+ packagePos=freePoint();
+ target=freePoint();
+ while(distance(packagePos,target)<500)target=freePoint();
+
+ carrying=false;
+ orders=0;money=0;score=0;
+ running=false;gameOver=false;won=false;brake=false;
+ updateStats();
+
+ document.getElementById('task').textContent='Nhận gói hàng màu vàng!';
+ document.getElementById('destination').textContent='Chưa có';
+ document.getElementById('startTitle').textContent='🛵 GIAO HÀNG THÀNH PHỐ';
+ document.getElementById('startText').textContent='Khám phá thành phố rộng lớn, nhận hàng và giao đến nơi để kiếm tiền.';
+ document.getElementById('play').textContent='BẮT ĐẦU CHƠI ▶';
+ document.getElementById('start').style.display='flex';
 }
+
 function updateStats(){
-document.getElementById('orders').textContent=orders;
-document.getElementById('money').textContent=money;
-document.getElementById('score').textContent=score;
+ document.getElementById('orders').textContent=orders;
+ document.getElementById('money').textContent=money;
+ document.getElementById('score').textContent=score;
 }
+
 function notify(text){
-const el=document.getElementById('toast');
-el.textContent=text;el.style.display='block';toastUntil=performance.now()+2200;
+ const el=document.getElementById('toast');
+ el.textContent=text;
+ el.style.display='block';
+ toastUntil=performance.now()+2300;
 }
+
+function endGame(){
+ if(gameOver||won)return;
+ gameOver=true;
+ running=false;
+ document.getElementById('startTitle').textContent='💥 GAME OVER!';
+ document.getElementById('startText').textContent=
+  'Bạn đã đâm trúng xe! Điểm: '+score+' · Tiền kiếm được: '+money+'k';
+ document.getElementById('play').textContent='CHƠI LẠI 🔄';
+ document.getElementById('start').style.display='flex';
+}
+
 function update(dt){
-if(!running||won)return;
-let dx=0,dy=0;
-if(keys.ArrowUp||keys.w||keys.W)dy--;
-if(keys.ArrowDown||keys.s||keys.S)dy++;
-if(keys.ArrowLeft||keys.a||keys.A)dx--;
-if(keys.ArrowRight||keys.d||keys.D)dx++;
-if(dx||dy){
-const l=Math.hypot(dx,dy);dx/=l;dy/=l;
-player.angle=Math.atan2(dy,dx);
-const speed=(brake?90:250)*dt;
-const nx=player.x+dx*speed,ny=player.y+dy*speed;
-if(!blocked(nx,player.y,17))player.x=nx;
-if(!blocked(player.x,ny,17))player.y=ny;
+ if(!running||gameOver||won)return;
+
+ let dx=0,dy=0;
+ if(keys.ArrowUp||keys.w||keys.W)dy--;
+ if(keys.ArrowDown||keys.s||keys.S)dy++;
+ if(keys.ArrowLeft||keys.a||keys.A)dx--;
+ if(keys.ArrowRight||keys.d||keys.D)dx++;
+
+ if(dx||dy){
+  const length=Math.hypot(dx,dy);
+  dx/=length;dy/=length;
+  player.angle=Math.atan2(dy,dx);
+  const speed=(brake?95:245)*dt;
+  const nx=player.x+dx*speed;
+  const ny=player.y+dy*speed;
+  if(!blocked(nx,player.y,17))player.x=nx;
+  if(!blocked(player.x,ny,17))player.y=ny;
+ }
+
+ // Xe cộ chạy dọc theo đường
+ for(const car of traffic){
+  if(car.vertical){
+   car.y+=car.dir*car.speed*dt;
+   if(car.y<-30)car.y=WORLD.h+20;
+   if(car.y>WORLD.h+30)car.y=-20;
+  }else{
+   car.x+=car.dir*car.speed*dt;
+   if(car.x<-40)car.x=WORLD.w+20;
+   if(car.x>WORLD.w+40)car.x=-20;
+  }
+
+  // Va chạm với xe là thua
+  if(distance(player,car)<32){
+   endGame();
+   return;
+  }
+ }
+
+ if(!carrying&&distance(player,packagePos)<40){
+  carrying=true;
+  document.getElementById('task').textContent='Đã lấy hàng! Đến điểm giao màu hồng.';
+  document.getElementById('destination').textContent='Điểm giao hàng';
+  notify('📦 Đã lấy hàng! Đi giao thôi!');
+ }
+
+ if(carrying&&distance(player,target)<43){
+  carrying=false;
+  orders++;money+=20;score+=100;
+  updateStats();
+
+  if(orders>=10){
+   won=true;running=false;
+   document.getElementById('startTitle').textContent='🏆 CHIẾN THẮNG!';
+   document.getElementById('startText').textContent=
+    'Bạn đã giao đủ 10 đơn và kiếm được '+money+'k!';
+   document.getElementById('play').textContent='CHƠI LẠI 🔄';
+   document.getElementById('start').style.display='flex';
+   return;
+  }
+
+  packagePos=freePoint();
+  target=freePoint();
+  while(distance(packagePos,target)<500)target=freePoint();
+  document.getElementById('task').textContent='Nhận gói hàng màu vàng!';
+  document.getElementById('destination').textContent='Chưa có';
+  notify('🎉 Giao thành công! +20k');
+ }
+
+ const vw=canvas.clientWidth,vh=canvas.clientHeight;
+ camera.x=Math.max(0,Math.min(WORLD.w-vw,player.x-vw/2));
+ camera.y=Math.max(0,Math.min(WORLD.h-vh,player.y-vh/2));
 }
-if(!carrying&&dist(player,packagePos)<38){
-carrying=true;
-document.getElementById('task').textContent='Đang mang hàng đến điểm màu hồng!';
-document.getElementById('destination').textContent='Điểm giao hàng';
-notify('📦 Đã lấy hàng! Đi giao thôi!');
+
+function drawRoads(){
+ ctx.fillStyle='#9ccc85';
+ ctx.fillRect(0,0,WORLD.w,WORLD.h);
+ ctx.fillStyle='#69737c';
+ for(let x=0;x<WORLD.w;x+=STEP)ctx.fillRect(x,0,ROAD,WORLD.h);
+ for(let y=0;y<WORLD.h;y+=STEP)ctx.fillRect(0,y,WORLD.w,ROAD);
+
+ ctx.fillStyle='#c9c8bd';
+ for(let x=0;x<WORLD.w;x+=STEP){
+  ctx.fillRect(x,0,8,WORLD.h);
+  ctx.fillRect(x+ROAD-8,0,8,WORLD.h);
+ }
+ for(let y=0;y<WORLD.h;y+=STEP){
+  ctx.fillRect(0,y,WORLD.w,8);
+  ctx.fillRect(0,y+ROAD-8,WORLD.w,8);
+ }
+
+ ctx.strokeStyle='#f5e5a0';ctx.lineWidth=4;
+ ctx.setLineDash([24,22]);
+ for(let x=ROAD/2;x<WORLD.w;x+=STEP){
+  ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,WORLD.h);ctx.stroke();
+ }
+ for(let y=ROAD/2;y<WORLD.h;y+=STEP){
+  ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(WORLD.w,y);ctx.stroke();
+ }
+ ctx.setLineDash([]);
 }
-if(carrying&&dist(player,target)<42){
-carrying=false;orders++;money+=20;score+=100;
-if(orders>=10){
-won=true;running=false;
-document.getElementById('task').textContent='Hoàn thành 10 đơn hàng!';
-notify('🎉 Tuyệt vời! Bạn đã giao đủ 10 đơn!');
-document.getElementById('start').style.display='flex';
-document.querySelector('#start h2').textContent='🏆 HOÀN THÀNH!';
-document.querySelector('#start p').textContent='Bạn đã giao 10 đơn hàng và kiếm được '+money+'k!';
-document.getElementById('play').textContent='CHƠI LẠI 🔄';
-}else{
-packagePos=freePoint();target=freePoint();
-while(dist(packagePos,target)<500)target=freePoint();
-document.getElementById('task').textContent='Nhận gói hàng màu vàng!';
-document.getElementById('destination').textContent='Chưa có';
-notify('💰 Giao thành công! +20k');
+
+function drawBuildings(){
+ for(const b of buildings){
+  ctx.fillStyle='#58636c';
+  ctx.fillRect(b.x+7,b.y+9,b.w,b.h);
+  ctx.fillStyle=b.color;
+  ctx.fillRect(b.x,b.y,b.w,b.h);
+  ctx.fillStyle='#ffffff70';
+  ctx.fillRect(b.x+6,b.y+6,b.w-12,8);
+  ctx.fillStyle='#5c8293';
+  for(let wx=b.x+12;wx<b.x+b.w-8;wx+=25){
+   for(let wy=b.y+22;wy<b.y+b.h-10;wy+=25){
+    ctx.fillRect(wx,wy,12,13);
+   }
+  }
+  ctx.fillStyle='#805d49';
+  ctx.fillRect(b.x+b.w/2-10,b.y+b.h-27,20,27);
+ }
 }
-updateStats();
-}
-const vw=canvas.clientWidth,vh=canvas.clientHeight;
-camera.x=Math.max(0,Math.min(WORLD.w-vw,player.x-vw/2));
-camera.y=Math.max(0,Math.min(WORLD.h-vh,player.y-vh/2));
-}
-function drawCity(){
-const vw=canvas.clientWidth,vh=canvas.clientHeight;
-ctx.clearRect(0,0,vw,vh);
-ctx.save();ctx.translate(-camera.x,-camera.y);
-ctx.fillStyle='#9cce8b';ctx.fillRect(0,0,WORLD.w,WORLD.h);
-// Roads in a large grid
-ctx.fillStyle='#626c75';
-for(let x=0;x<WORLD.w;x+=STEP)ctx.fillRect(x,0,ROAD,WORLD.h);
-for(let y=0;y<WORLD.h;y+=STEP)ctx.fillRect(0,y,WORLD.w,ROAD);
-// Sidewalks
-ctx.fillStyle='#c8c9be';
-for(let x=0;x<WORLD.w;x+=STEP){ctx.fillRect(x,0,9,WORLD.h);ctx.fillRect(x+ROAD-9,0,9,WORLD.h);}
-for(let y=0;y<WORLD.h;y+=STEP){ctx.fillRect(0,y,WORLD.w,9);ctx.fillRect(0,y+ROAD-9,WORLD.w,9);}
-// Road markings
-ctx.strokeStyle='#f8e49a';ctx.lineWidth=4;ctx.setLineDash([25,22]);
-for(let x=ROAD/2;x<WORLD.w;x+=STEP){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,WORLD.h);ctx.stroke();}
-for(let y=ROAD/2;y<WORLD.h;y+=STEP){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(WORLD.w,y);ctx.stroke();}
-ctx.setLineDash([]);
-// Buildings
-for(const b of buildings){
-ctx.fillStyle='#5c6770';ctx.fillRect(b.x+8,b.y+10,b.w,b.h);
-ctx.fillStyle=b.color;ctx.fillRect(b.x,b.y,b.w,b.h);
-ctx.fillStyle='#ffffff66';ctx.fillRect(b.x+7,b.y+7,b.w-14,8);
-ctx.fillStyle='#648394';
-for(let wx=b.x+12;wx<b.x+b.w-10;wx+=25){
-for(let wy=b.y+24;wy<b.y+b.h-12;wy+=25){
-ctx.fillRect(wx,wy,12,13);
-}
-}
-ctx.fillStyle='#826653';ctx.fillRect(b.x+b.w/2-11,b.y+b.h-29,22,29);
-ctx.fillStyle='#f4e7bb';ctx.fillRect(b.x+b.w/2-2,b.y+b.h-29,4,29);
-}
-// Park decorations
-for(let x=ROAD+10;x<WORLD.w;x+=STEP)for(let y=ROAD+10;y<WORLD.h;y+=STEP){
-ctx.fillStyle='#8eb77c';
-ctx.beginPath();ctx.arc(x+370,y+350,18,0,Math.PI*2);ctx.fill();
-ctx.fillStyle='#527c50';ctx.fillRect(x+366,y+348,8,25);
-}
-drawMarker(packagePos,'#ffcb43','📦');
-drawMarker(target,'#ff72b6','★');
-drawPlayer();
-ctx.restore();
-drawMini();
-}
+
 function drawMarker(p,color,label){
-ctx.fillStyle=color;ctx.beginPath();ctx.arc(p.x,p.y,25+Math.sin(performance.now()/200)*3,0,Math.PI*2);ctx.fill();
-ctx.fillStyle='#273746';ctx.font='bold 23px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,p.x,p.y);
+ ctx.fillStyle=color;
+ ctx.beginPath();
+ ctx.arc(p.x,p.y,24+Math.sin(performance.now()/200)*3,0,Math.PI*2);
+ ctx.fill();
+ ctx.fillStyle='#263747';
+ ctx.font='bold 22px Arial';
+ ctx.textAlign='center';ctx.textBaseline='middle';
+ ctx.fillText(label,p.x,p.y);
 }
+
+function drawTraffic(){
+ for(const car of traffic){
+  ctx.save();
+  ctx.translate(car.x,car.y);
+  let angle=car.vertical?Math.PI/2:0;
+  if(car.dir<0)angle+=Math.PI;
+  ctx.rotate(angle);
+
+  ctx.fillStyle='#27313a';
+  ctx.fillRect(-22,-14,12,7);
+  ctx.fillRect(10,-14,12,7);
+  ctx.fillRect(-22,7,12,7);
+  ctx.fillRect(10,7,12,7);
+
+  ctx.fillStyle=car.color;
+  ctx.fillRect(-22,-12,44,24);
+  ctx.fillStyle='#bdeaff';
+  ctx.fillRect(0,-9,12,18);
+  ctx.fillStyle='#fff2b2';
+  ctx.fillRect(17,-8,5,6);
+  ctx.fillRect(17,2,5,6);
+  ctx.restore();
+ }
+}
+
 function drawPlayer(){
-ctx.save();ctx.translate(player.x,player.y);ctx.rotate(player.angle);
-ctx.fillStyle='#29323a';ctx.fillRect(-20,-15,14,9);ctx.fillRect(8,-15,14,9);ctx.fillRect(-20,7,14,9);ctx.fillRect(8,7,14,9);
-ctx.fillStyle='#16b9d4';ctx.beginPath();ctx.roundRect(-18,-12,37,24,7);ctx.fill();
-ctx.fillStyle='#fff1b1';ctx.fillRect(8,-6,10,12);
-ctx.fillStyle='#f65e76';ctx.beginPath();ctx.arc(-5,0,9,0,Math.PI*2);ctx.fill();
-ctx.fillStyle='#ffdb8c';ctx.fillRect(-8,-5,6,5);
-ctx.fillStyle='#243347';ctx.fillRect(-16,-4,6,8);
-if(carrying){ctx.fillStyle='#ffcf62';ctx.fillRect(-10,-24,18,12);ctx.strokeStyle='#fff';ctx.strokeRect(-10,-24,18,12);}
-ctx.restore();
+ ctx.save();
+ ctx.translate(player.x,player.y);
+ ctx.rotate(player.angle);
+
+ ctx.fillStyle='#26323a';
+ ctx.fillRect(-18,-15,13,8);
+ ctx.fillRect(9,-15,13,8);
+ ctx.fillRect(-18,7,13,8);
+ ctx.fillRect(9,7,13,8);
+
+ ctx.fillStyle='#09b9d3';
+ ctx.beginPath();
+ ctx.roundRect(-19,-12,38,24,7);
+ ctx.fill();
+
+ ctx.fillStyle='#eafaff';
+ ctx.fillRect(1,-8,12,16);
+
+ ctx.fillStyle='#ef5570';
+ ctx.beginPath();
+ ctx.arc(-7,0,9,0,Math.PI*2);
+ ctx.fill();
+
+ ctx.fillStyle='#fff0a8';
+ ctx.fillRect(14,-7,5,5);
+ ctx.fillRect(14,2,5,5);
+
+ if(carrying){
+  ctx.fillStyle='#ffcf62';
+  ctx.fillRect(-10,-26,19,13);
+  ctx.strokeStyle='#fff';
+  ctx.strokeRect(-10,-26,19,13);
+ }
+ ctx.restore();
 }
+
 function drawMini(){
-const w=mini.clientWidth,h=mini.clientHeight;
-mctx.clearRect(0,0,w,h);mctx.fillStyle='#8fbd7d';mctx.fillRect(0,0,w,h);
-mctx.fillStyle='#66717b';
-for(let x=0;x<WORLD.w;x+=STEP)mctx.fillRect(x/WORLD.w*w,0,ROAD/WORLD.w*w,h);
-for(let y=0;y<WORLD.h;y+=STEP)mctx.fillRect(0,y/WORLD.h*h,w,ROAD/WORLD.h*h);
-mctx.fillStyle='#d8d5c9';
-for(const b of buildings)mctx.fillRect(b.x/WORLD.w*w,b.y/WORLD.h*h,b.w/WORLD.w*w,b.h/WORLD.h*h);
-function dot(p,col){mctx.fillStyle=col;mctx.beginPath();mctx.arc(p.x/WORLD.w*w,p.y/WORLD.h*h,4,0,Math.PI*2);mctx.fill();}
-if(!carrying)dot(packagePos,'#ffcb43');
-dot(target,'#ff72b6');dot(player,'#00e5ff');
-mctx.strokeStyle='#fff';mctx.lineWidth=1;
-mctx.strokeRect(camera.x/WORLD.w*w,camera.y/WORLD.h*h,canvas.clientWidth/WORLD.w*w,canvas.clientHeight/WORLD.h*h);
+ const w=mini.clientWidth,h=mini.clientHeight;
+ mctx.clearRect(0,0,w,h);
+ mctx.fillStyle='#9ccc85';mctx.fillRect(0,0,w,h);
+
+ mctx.fillStyle='#69737c';
+ for(let x=0;x<WORLD.w;x+=STEP)mctx.fillRect(x/WORLD.w*w,0,ROAD/WORLD.w*w,h);
+ for(let y=0;y<WORLD.h;y+=STEP)mctx.fillRect(0,y/WORLD.h*h,w,ROAD/WORLD.h*h);
+
+ mctx.fillStyle='#d6d1c2';
+ for(const b of buildings){
+  mctx.fillRect(b.x/WORLD.w*w,b.y/WORLD.h*h,b.w/WORLD.w*w,b.h/WORLD.h*h);
+ }
+
+ function dot(p,color,r){
+  mctx.fillStyle=color;
+  mctx.beginPath();
+  mctx.arc(p.x/WORLD.w*w,p.y/WORLD.h*h,r,0,Math.PI*2);
+  mctx.fill();
+ }
+ if(!carrying)dot(packagePos,'#ffcf43',3);
+ dot(target,'#ff72b6',3);
+ for(const car of traffic)dot(car,'#ff4b4b',1.5);
+ dot(player,'#00e5ff',4);
+
+ mctx.strokeStyle='white';mctx.lineWidth=1;
+ mctx.strokeRect(
+  camera.x/WORLD.w*w,camera.y/WORLD.h*h,
+  canvas.clientWidth/WORLD.w*w,canvas.clientHeight/WORLD.h*h
+ );
 }
-function frame(t){
-const dt=Math.min((t-last)/1000||0,.035);last=t;
-update(dt);drawCity();
-if(toastUntil&&t>toastUntil){document.getElementById('toast').style.display='none';toastUntil=0;}
-requestAnimationFrame(frame);
+
+function draw(){
+ const vw=canvas.clientWidth,vh=canvas.clientHeight;
+ ctx.clearRect(0,0,vw,vh);
+ ctx.save();
+ ctx.translate(-camera.x,-camera.y);
+ drawRoads();
+ drawBuildings();
+ drawTraffic();
+ if(!carrying)drawMarker(packagePos,'#ffcf43','📦');
+ drawMarker(target,'#ff72b6','★');
+ drawPlayer();
+ ctx.restore();
+ drawMini();
 }
+
+function frame(time){
+ const dt=Math.min((time-last)/1000||0,0.035);
+ last=time;
+ update(dt);
+ draw();
+ if(toastUntil&&time>toastUntil){
+  document.getElementById('toast').style.display='none';
+  toastUntil=0;
+ }
+ requestAnimationFrame(frame);
+}
+
 document.addEventListener('keydown',e=>{
-if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();
-keys[e.key]=true;
+ if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();
+ keys[e.key]=true;
 });
 document.addEventListener('keyup',e=>keys[e.key]=false);
-window.addEventListener('blur',()=>{for(const k in keys)keys[k]=false;});
+window.addEventListener('blur',()=>{
+ for(const k in keys)keys[k]=false;
+ brake=false;
+});
+
 document.querySelectorAll('[data-key]').forEach(btn=>{
-const k=btn.dataset.key;
-btn.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true;btn.setPointerCapture(e.pointerId);});
-function release(){keys[k]=false;}
-btn.addEventListener('pointerup',release);
-btn.addEventListener('pointercancel',release);
-btn.addEventListener('lostpointercapture',release);
+ const k=btn.dataset.key;
+ btn.addEventListener('pointerdown',e=>{
+  e.preventDefault();keys[k]=true;
+  btn.setPointerCapture(e.pointerId);
+ });
+ function release(){keys[k]=false;}
+ btn.addEventListener('pointerup',release);
+ btn.addEventListener('pointercancel',release);
+ btn.addEventListener('lostpointercapture',release);
 });
-document.getElementById('brake').addEventListener('pointerdown',()=>brake=true);
-['pointerup','pointercancel','pointerleave'].forEach(ev=>document.getElementById('brake').addEventListener(ev,()=>brake=false));
+
+const brakeButton=document.getElementById('brake');
+brakeButton.addEventListener('pointerdown',e=>{
+ e.preventDefault();brake=true;
+});
+['pointerup','pointercancel','pointerleave','lostpointercapture'].forEach(ev=>{
+ brakeButton.addEventListener(ev,()=>brake=false);
+});
+
 document.getElementById('play').addEventListener('click',()=>{
-if(won){
-document.querySelector('#start h2').textContent='🛵 GIAO HÀNG THÀNH PHỐ';
-document.querySelector('#start p').textContent='Khám phá thành phố rộng lớn, nhận hàng và giao tận nơi để kiếm tiền!';
-document.getElementById('play').textContent='BẮT ĐẦU CHƠI ▶';
-reset();
-}
-running=true;
-document.getElementById('start').style.display='none';
+ if(gameOver||won)reset();
+ running=true;
+ document.getElementById('start').style.display='none';
 });
-document.getElementById('restart').addEventListener('click',()=>{
-document.querySelector('#start h2').textContent='🛵 GIAO HÀNG THÀNH PHỐ';
-document.querySelector('#start p').textContent='Khám phá thành phố rộng lớn, nhận hàng và giao tận nơi để kiếm tiền!';
-document.getElementById('play').textContent='BẮT ĐẦU CHƠI ▶';
+
+document.getElementById('restart').addEventListener('click',reset);
+
+resize();
 reset();
-});
-resize();reset();requestAnimationFrame(frame);
+requestAnimationFrame(frame);
 })();
 </script>
 </body>
