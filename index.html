@@ -4,80 +4,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Giao Hàng Thành Phố 2D 🛵</title>
+<title>Giao Hàng 2D 🛵</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#172538;color:white;font-family:Arial,sans-serif;overflow:hidden}
-header{height:64px;background:#20344b;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;gap:8px}
-h1{font-size:clamp(16px,3vw,24px);margin:0;color:#ffe18b}
-.stats{display:flex;gap:13px;flex-wrap:wrap;font-size:14px}
-#wrap{position:relative;width:100vw;height:calc(100dvh - 64px)}
-#game{display:block;width:100%;height:100%;touch-action:none}
-#mission{position:absolute;top:12px;left:12px;background:#172538ee;border:1px solid #60758b;border-radius:12px;padding:12px;width:min(235px,48vw);font-size:13px;line-height:1.7;pointer-events:none}
-#mission b{color:#ffe18b}
-#map{position:absolute;top:12px;right:12px;width:145px;height:110px;border:3px solid white;border-radius:10px;background:#8fbd7d}
-#hint{position:absolute;right:12px;top:132px;background:#172538e8;padding:9px;border-radius:9px;font-size:12px}
-#toast{display:none;position:absolute;left:50%;top:18px;transform:translateX(-50%);background:#173c32;color:#fff4bd;padding:12px 18px;border-radius:12px;font-weight:bold;text-align:center;max-width:85%;pointer-events:none}
-#controls{position:absolute;bottom:14px;left:14px;display:grid;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(2,48px);gap:5px}
-#controls button{border:1px solid #ffffff80;background:#263d55ed;color:white;border-radius:12px;font-size:23px;touch-action:none}
+body{margin:0;background:#172438;color:white;font-family:Arial,sans-serif}
+header{height:58px;background:#223750;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;gap:8px}
+h1{font-size:20px;color:#ffdb75;margin:0}
+#stats{font-weight:bold;font-size:14px}
+#gamebox{position:relative;width:100vw;height:calc(100dvh - 58px);overflow:hidden}
+#game{width:100%;height:100%;display:block;touch-action:none}
+#map{position:absolute;right:12px;top:12px;width:145px;height:105px;border:2px solid white;border-radius:8px;background:#8dbd7c}
+#mission{position:absolute;left:12px;top:12px;background:#172438ed;padding:12px;border-radius:12px;line-height:1.7;font-size:13px;max-width:220px}
+#mission b{color:#ffdb75}
+#message{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:#194537;padding:10px 15px;border-radius:10px;display:none;font-weight:bold;text-align:center;max-width:75%}
+#pad{position:absolute;bottom:12px;left:12px;display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,45px);gap:5px}
+#pad button{border:0;border-radius:10px;background:#ffcf5b;font-size:23px;touch-action:none}
 #up{grid-column:2}#left{grid-column:1;grid-row:2}#down{grid-column:2;grid-row:2}#right{grid-column:3;grid-row:2}
-#actions{position:absolute;bottom:16px;right:14px;display:flex;flex-direction:column;gap:8px}
-.action{background:#ffcf62;color:#243247;border:0;border-radius:12px;padding:12px;font-weight:bold;font-size:14px}
-#start{position:absolute;inset:0;background:#122235dd;display:flex;align-items:center;justify-content:center;padding:16px}
-.panel{background:#20374f;border:2px solid #7189a0;border-radius:22px;padding:24px;width:min(410px,94vw);text-align:center;box-shadow:0 12px 50px #0006}
-.panel h2{color:#ffe18b;margin-top:0}
-.panel p{line-height:1.65;color:#e0eaf2}
-.panel button{background:#ffcf62;border:0;border-radius:12px;padding:14px 24px;font-size:17px;font-weight:bold}
+#restart{position:absolute;right:12px;bottom:12px;background:#ffcf5b;border:0;border-radius:10px;padding:12px;font-weight:bold}
+#overlay{position:absolute;inset:0;background:#101b2cdb;display:flex;align-items:center;justify-content:center;padding:16px}
+.panel{width:min(400px,95vw);padding:24px;background:#243d57;border:2px solid #8095a7;border-radius:20px;text-align:center}
+.panel h2{color:#ffdb75}
+.panel p{line-height:1.6}
+.panel button{border:0;border-radius:12px;padding:14px 24px;background:#ffcf5b;font-size:17px;font-weight:bold}
 @media(max-width:600px){
- header{height:76px;align-items:flex-start;flex-direction:column;justify-content:center;gap:5px;padding:7px 10px}
- .stats{font-size:12px;gap:10px}
- #wrap{height:calc(100dvh - 76px)}
- #mission{top:8px;left:8px;padding:8px;font-size:11px;width:155px}
- #map{width:100px;height:78px;right:8px;top:8px}
- #hint{top:92px;right:8px;font-size:10px}
- #controls{left:8px;bottom:9px;grid-template-columns:repeat(3,45px);grid-template-rows:repeat(2,42px)}
- #controls button{font-size:19px}
- #actions{right:8px;bottom:9px}
- .action{font-size:12px;padding:10px}
+ header{height:66px;display:block;padding:6px 10px}
+ h1{font-size:17px;margin-bottom:5px}
+ #stats{font-size:12px}
+ #gamebox{height:calc(100dvh - 66px)}
+ #mission{left:7px;top:7px;padding:8px;font-size:11px;max-width:155px}
+ #map{right:7px;top:7px;width:100px;height:76px}
+ #pad{left:7px;bottom:7px;grid-template-columns:repeat(3,42px);grid-template-rows:repeat(2,40px)}
+ #pad button{font-size:19px}
+ #restart{right:7px;bottom:7px;padding:10px;font-size:12px}
 }
 </style>
 </head>
 <body>
 <header>
-<h1>🏙️ Giao Hàng 2D</h1>
-<div class="stats">
-<span>📦 Đơn: <b id="orders">0</b>/10</span>
-<span>💰 Tiền: <b id="money">0</b>k</span>
-<span>⭐ Điểm: <b id="score">0</b></span>
-</div>
+<h1>🛵 GIAO HÀNG THÀNH PHỐ</h1>
+<div id="stats">📦 Đơn: <span id="orders">0</span>/10　💰 <span id="money">0</span>k　⭐ <span id="score">0</span></div>
 </header>
-
-<div id="wrap">
+<div id="gamebox">
 <canvas id="game"></canvas>
-<div id="mission">
-<b>🛵 NHIỆM VỤ</b><br>
-<span id="task">Nhận gói hàng màu vàng!</span><br>
-Điểm giao: <b id="destination">Chưa có</b>
-</div>
 <canvas id="map"></canvas>
-<div id="hint">⌨️ WASD / phím mũi tên<br>🚗 Né xe đang chạy!</div>
-<div id="toast"></div>
-<div id="controls">
+<div id="mission"><b>📦 NHIỆM VỤ</b><br><span id="task">Lấy gói hàng màu vàng</span><br>Đích: <b>★ màu hồng</b><br>🚗 Né xe đang chạy!</div>
+<div id="message"></div>
+<div id="pad">
 <button id="up" data-key="ArrowUp">⬆️</button>
 <button id="left" data-key="ArrowLeft">⬅️</button>
 <button id="down" data-key="ArrowDown">⬇️</button>
 <button id="right" data-key="ArrowRight">➡️</button>
 </div>
-<div id="actions">
-<button class="action" id="brake">🛑 Phanh</button>
-<button class="action" id="restart">🔄 Chơi lại</button>
-</div>
-<div id="start">
+<button id="restart">🔄 Chơi lại</button>
+<div id="overlay">
 <div class="panel">
-<h2 id="startTitle">🛵 GIAO HÀNG THÀNH PHỐ</h2>
-<p id="startText">Khám phá thành phố rộng lớn, nhận hàng và giao đến nơi để kiếm tiền.</p>
-<p>🏙️ Bản đồ rộng · 🚗 Xe cộ lưu thông<br>📦 Giao 10 đơn · 💰 Thưởng 20k/đơn</p>
-<p>Né xe cộ! Đâm trúng xe khác là thua.</p>
+<h2 id="heading">🏙️ GIAO HÀNG 2D</h2>
+<p id="intro">Thành phố rộng lớn, xe cộ lưu thông. Nhận hàng, giao hàng và kiếm tiền. Đâm trúng xe khác là thua!</p>
+<p>⌨️ WASD / phím mũi tên<br>📦 Giao 10 đơn để chiến thắng<br>💰 Mỗi đơn được 20k</p>
 <button id="play">BẮT ĐẦU CHƠI ▶</button>
 </div>
 </div>
@@ -85,434 +68,241 @@ h1{font-size:clamp(16px,3vw,24px);margin:0;color:#ffe18b}
 
 <script>
 (()=>{
-const canvas=document.getElementById('game');
-const ctx=canvas.getContext('2d');
-const mini=document.getElementById('map');
-const mctx=mini.getContext('2d');
-
-const WORLD={w:3200,h:2600};
-const ROAD=180,BLOCK=420,STEP=ROAD+BLOCK;
+const canvas=document.querySelector("#game"),ctx=canvas.getContext("2d");
+const map=document.querySelector("#map"),mc=map.getContext("2d");
+const WORLD={w:3600,h:3000},ROAD=170,STEP=570;
 const keys={};
-let player,buildings,traffic,packagePos,target;
-let carrying=false,orders=0,money=0,score=0;
-let running=false,gameOver=false,won=false,brake=false;
-let camera={x:0,y:0},last=0,toastUntil=0;
-
-const colors=['#f2b5a7','#d6c4f0','#a9d6cc','#f1d79b','#b6d2ef','#edc8a5'];
-const carColors=['#ff6262','#ffd166','#8b7bff','#eeeeee','#35c9a5','#ff9f43'];
-
+let player,cars,buildings,parcel,goal,carrying=false;
+let orders=0,money=0,score=0,running=false,ended=false;
+let camera={x:0,y:0},last=0;
+const colors=["#ff7474","#ffd166","#7b9cff","#f7f7f7","#43c9a5","#ff9f43","#d68bff"];
 function resize(){
- const dpr=Math.min(window.devicePixelRatio||1,2);
- canvas.width=Math.round(canvas.clientWidth*dpr);
- canvas.height=Math.round(canvas.clientHeight*dpr);
- ctx.setTransform(dpr,0,0,dpr,0,0);
- mini.width=Math.round(mini.clientWidth*dpr);
- mini.height=Math.round(mini.clientHeight*dpr);
- mctx.setTransform(dpr,0,0,dpr,0,0);
+ const d=Math.min(devicePixelRatio||1,2);
+ canvas.width=canvas.clientWidth*d;canvas.height=canvas.clientHeight*d;
+ ctx.setTransform(d,0,0,d,0,0);
+ map.width=map.clientWidth*d;map.height=map.clientHeight*d;
+ mc.setTransform(d,0,0,d,0,0);
 }
-window.addEventListener('resize',resize);
-
+window.addEventListener("resize",resize);
 function distance(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
-
 function makeBuildings(){
  buildings=[];
- for(let x=ROAD+10;x<WORLD.w-BLOCK;x+=STEP){
-  for(let y=ROAD+10;y<WORLD.h-BLOCK;y+=STEP){
+ for(let x=ROAD+12;x<WORLD.w-100;x+=STEP){
+  for(let y=ROAD+12;y<WORLD.h-100;y+=STEP){
    for(let i=0;i<5;i++){
     buildings.push({
-     x:x+25+(i%2)*170,
-     y:y+20+Math.floor(i/2)*125,
-     w:105+Math.random()*35,
-     h:80+Math.random()*35,
+     x:x+20+(i%2)*190,y:y+20+Math.floor(i/2)*130,
+     w:110+Math.random()*40,h:85+Math.random()*35,
      color:colors[Math.floor(Math.random()*colors.length)]
     });
    }
   }
  }
 }
-
-function roadPoint(){
- if(Math.random()<0.5){
-  const lane=Math.floor(Math.random()*Math.ceil(WORLD.w/STEP));
-  return {x:Math.min(lane*STEP+ROAD/2,WORLD.w-30),y:40+Math.random()*(WORLD.h-80)};
- }
- const lane=Math.floor(Math.random()*Math.ceil(WORLD.h/STEP));
- return {x:40+Math.random()*(WORLD.w-80),y:Math.min(lane*STEP+ROAD/2,WORLD.h-30)};
-}
-
-function blocked(x,y,r){
+function blocked(x,y,r=15){
  if(x<r||y<r||x>WORLD.w-r||y>WORLD.h-r)return true;
- return buildings.some(b=>
-  x+r>b.x&&x-r<b.x+b.w&&y+r>b.y&&y-r<b.y+b.h
- );
+ return buildings.some(b=>x+r>b.x&&x-r<b.x+b.w&&y+r>b.y&&y-r<b.y+b.h);
 }
-
-function freePoint(){
- for(let i=0;i<150;i++){
-  const p=roadPoint();
-  if(!blocked(p.x,p.y,18))return p;
+function roadPoint(){
+ if(Math.random()<.5){
+  return {x:Math.min(ROAD/2+Math.floor(Math.random()*(WORLD.w/STEP))*STEP,WORLD.w-20),y:30+Math.random()*(WORLD.h-60)};
  }
+ return {x:30+Math.random()*(WORLD.w-60),y:Math.min(ROAD/2+Math.floor(Math.random()*(WORLD.h/STEP))*STEP,WORLD.h-20)};
+}
+function freePoint(){
+ for(let i=0;i<250;i++){let p=roadPoint();if(!blocked(p.x,p.y,18))return p}
  return {x:ROAD/2,y:ROAD/2};
 }
-
-function makeTraffic(){
- traffic=[];
- for(let i=0;i<24;i++){
-  const vertical=Math.random()<0.5;
-  const lane=Math.floor(Math.random()*(vertical?
-   Math.ceil(WORLD.w/STEP):Math.ceil(WORLD.h/STEP)));
-  traffic.push({
+function makeCars(){
+ cars=[];
+ for(let i=0;i<36;i++){
+  const vertical=Math.random()<.5;
+  const lane=Math.floor(Math.random()*(vertical?Math.ceil(WORLD.w/STEP):Math.ceil(WORLD.h/STEP)));
+  let car={
    vertical,
-   x:vertical?Math.min(lane*STEP+ROAD/2,WORLD.w-30):Math.random()*WORLD.w,
-   y:vertical?Math.random()*WORLD.h:Math.min(lane*STEP+ROAD/2,WORLD.h-30),
-   dir:Math.random()<0.5?1:-1,
-   speed:90+Math.random()*85,
-   color:carColors[i%carColors.length],
-   w:43,h:25
-  });
+   x:vertical?Math.min(lane*STEP+ROAD/2,WORLD.w-25):Math.random()*WORLD.w,
+   y:vertical?Math.random()*WORLD.h:Math.min(lane*STEP+ROAD/2,WORLD.h-25),
+   dir:Math.random()<.5?1:-1,speed:100+Math.random()*100,
+   color:colors[i%colors.length]
+  };
+  if(distance(car,{x:ROAD/2,y:ROAD/2})<230){car.x+=400;car.y+=400}
+  cars.push(car);
  }
 }
-
 function reset(){
- makeBuildings();
- makeTraffic();
+ makeBuildings();makeCars();
  player={x:ROAD/2,y:ROAD/2,angle:0};
- camera={x:0,y:0};
- packagePos=freePoint();
- target=freePoint();
- while(distance(packagePos,target)<500)target=freePoint();
-
- carrying=false;
- orders=0;money=0;score=0;
- running=false;gameOver=false;won=false;brake=false;
+ camera={x:0,y:0};carrying=false;orders=0;money=0;score=0;ended=false;running=false;
+ parcel=freePoint();goal=freePoint();
+ while(distance(parcel,goal)<500)goal=freePoint();
  updateStats();
-
- document.getElementById('task').textContent='Nhận gói hàng màu vàng!';
- document.getElementById('destination').textContent='Chưa có';
- document.getElementById('startTitle').textContent='🛵 GIAO HÀNG THÀNH PHỐ';
- document.getElementById('startText').textContent='Khám phá thành phố rộng lớn, nhận hàng và giao đến nơi để kiếm tiền.';
- document.getElementById('play').textContent='BẮT ĐẦU CHƠI ▶';
- document.getElementById('start').style.display='flex';
+ document.querySelector("#task").textContent="Lấy gói hàng màu vàng";
+ document.querySelector("#heading").textContent="🏙️ GIAO HÀNG 2D";
+ document.querySelector("#intro").textContent="Thành phố rộng lớn, xe cộ lưu thông. Nhận hàng, giao hàng và kiếm tiền. Đâm trúng xe khác là thua!";
+ document.querySelector("#play").textContent="BẮT ĐẦU CHƠI ▶";
+ document.querySelector("#overlay").style.display="flex";
 }
-
 function updateStats(){
- document.getElementById('orders').textContent=orders;
- document.getElementById('money').textContent=money;
- document.getElementById('score').textContent=score;
+ document.querySelector("#orders").textContent=orders;
+ document.querySelector("#money").textContent=money;
+ document.querySelector("#score").textContent=score;
 }
-
-function notify(text){
- const el=document.getElementById('toast');
- el.textContent=text;
- el.style.display='block';
- toastUntil=performance.now()+2300;
+function message(s){
+ const el=document.querySelector("#message");el.textContent=s;el.style.display="block";
+ setTimeout(()=>el.style.display="none",1800);
 }
-
-function endGame(){
- if(gameOver||won)return;
- gameOver=true;
- running=false;
- document.getElementById('startTitle').textContent='💥 GAME OVER!';
- document.getElementById('startText').textContent=
-  'Bạn đã đâm trúng xe! Điểm: '+score+' · Tiền kiếm được: '+money+'k';
- document.getElementById('play').textContent='CHƠI LẠI 🔄';
- document.getElementById('start').style.display='flex';
+function endGame(win){
+ if(ended)return;
+ ended=true;running=false;
+ document.querySelector("#heading").textContent=win?"🏆 CHIẾN THẮNG!":"💥 GAME OVER!";
+ document.querySelector("#intro").textContent=win?
+ "Bạn đã giao đủ 10 đơn và kiếm được "+money+"k!":
+ "Bạn đã đâm trúng xe! Điểm: "+score+". Hãy thử lại nhé!";
+ document.querySelector("#play").textContent="CHƠI LẠI 🔄";
+ document.querySelector("#overlay").style.display="flex";
 }
-
 function update(dt){
- if(!running||gameOver||won)return;
-
+ if(!running||ended)return;
  let dx=0,dy=0;
  if(keys.ArrowUp||keys.w||keys.W)dy--;
  if(keys.ArrowDown||keys.s||keys.S)dy++;
  if(keys.ArrowLeft||keys.a||keys.A)dx--;
  if(keys.ArrowRight||keys.d||keys.D)dx++;
-
  if(dx||dy){
-  const length=Math.hypot(dx,dy);
-  dx/=length;dy/=length;
+  const len=Math.hypot(dx,dy);dx/=len;dy/=len;
   player.angle=Math.atan2(dy,dx);
-  const speed=(brake?95:245)*dt;
-  const nx=player.x+dx*speed;
-  const ny=player.y+dy*speed;
-  if(!blocked(nx,player.y,17))player.x=nx;
-  if(!blocked(player.x,ny,17))player.y=ny;
+  const speed=240*dt,nx=player.x+dx*speed,ny=player.y+dy*speed;
+  if(!blocked(nx,player.y,16))player.x=nx;
+  if(!blocked(player.x,ny,16))player.y=ny;
  }
-
- // Xe cộ chạy dọc theo đường
- for(const car of traffic){
+ for(const car of cars){
   if(car.vertical){
    car.y+=car.dir*car.speed*dt;
-   if(car.y<-30)car.y=WORLD.h+20;
-   if(car.y>WORLD.h+30)car.y=-20;
+   if(car.y<-35)car.y=WORLD.h+25;
+   if(car.y>WORLD.h+35)car.y=-25;
   }else{
    car.x+=car.dir*car.speed*dt;
-   if(car.x<-40)car.x=WORLD.w+20;
-   if(car.x>WORLD.w+40)car.x=-20;
+   if(car.x<-40)car.x=WORLD.w+25;
+   if(car.x>WORLD.w+40)car.x=-25;
   }
-
-  // Va chạm với xe là thua
-  if(distance(player,car)<32){
-   endGame();
-   return;
-  }
+  // Va chạm xe là thua
+  if(distance(player,car)<35){endGame(false);return}
  }
-
- if(!carrying&&distance(player,packagePos)<40){
+ if(!carrying&&distance(player,parcel)<40){
   carrying=true;
-  document.getElementById('task').textContent='Đã lấy hàng! Đến điểm giao màu hồng.';
-  document.getElementById('destination').textContent='Điểm giao hàng';
-  notify('📦 Đã lấy hàng! Đi giao thôi!');
+  document.querySelector("#task").textContent="Đã lấy hàng! Đi đến điểm hồng ★";
+  message("📦 Đã lấy hàng! Tìm điểm giao màu hồng!");
  }
-
- if(carrying&&distance(player,target)<43){
-  carrying=false;
-  orders++;money+=20;score+=100;
-  updateStats();
-
-  if(orders>=10){
-   won=true;running=false;
-   document.getElementById('startTitle').textContent='🏆 CHIẾN THẮNG!';
-   document.getElementById('startText').textContent=
-    'Bạn đã giao đủ 10 đơn và kiếm được '+money+'k!';
-   document.getElementById('play').textContent='CHƠI LẠI 🔄';
-   document.getElementById('start').style.display='flex';
-   return;
-  }
-
-  packagePos=freePoint();
-  target=freePoint();
-  while(distance(packagePos,target)<500)target=freePoint();
-  document.getElementById('task').textContent='Nhận gói hàng màu vàng!';
-  document.getElementById('destination').textContent='Chưa có';
-  notify('🎉 Giao thành công! +20k');
+ if(carrying&&distance(player,goal)<43){
+  carrying=false;orders++;money+=20;score+=100;updateStats();
+  if(orders>=10){endGame(true);return}
+  parcel=freePoint();goal=freePoint();
+  while(distance(parcel,goal)<500)goal=freePoint();
+  document.querySelector("#task").textContent="Lấy gói hàng màu vàng";
+  message("🎉 Giao hàng thành công! +20k");
  }
-
- const vw=canvas.clientWidth,vh=canvas.clientHeight;
- camera.x=Math.max(0,Math.min(WORLD.w-vw,player.x-vw/2));
- camera.y=Math.max(0,Math.min(WORLD.h-vh,player.y-vh/2));
+ camera.x=Math.max(0,Math.min(WORLD.w-canvas.clientWidth,player.x-canvas.clientWidth/2));
+ camera.y=Math.max(0,Math.min(WORLD.h-canvas.clientHeight,player.y-canvas.clientHeight/2));
 }
-
 function drawRoads(){
- ctx.fillStyle='#9ccc85';
- ctx.fillRect(0,0,WORLD.w,WORLD.h);
- ctx.fillStyle='#69737c';
+ ctx.fillStyle="#8dc779";ctx.fillRect(0,0,WORLD.w,WORLD.h);
+ ctx.fillStyle="#646d77";
  for(let x=0;x<WORLD.w;x+=STEP)ctx.fillRect(x,0,ROAD,WORLD.h);
  for(let y=0;y<WORLD.h;y+=STEP)ctx.fillRect(0,y,WORLD.w,ROAD);
-
- ctx.fillStyle='#c9c8bd';
- for(let x=0;x<WORLD.w;x+=STEP){
-  ctx.fillRect(x,0,8,WORLD.h);
-  ctx.fillRect(x+ROAD-8,0,8,WORLD.h);
- }
- for(let y=0;y<WORLD.h;y+=STEP){
-  ctx.fillRect(0,y,WORLD.w,8);
-  ctx.fillRect(0,y+ROAD-8,WORLD.w,8);
- }
-
- ctx.strokeStyle='#f5e5a0';ctx.lineWidth=4;
- ctx.setLineDash([24,22]);
- for(let x=ROAD/2;x<WORLD.w;x+=STEP){
-  ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,WORLD.h);ctx.stroke();
- }
- for(let y=ROAD/2;y<WORLD.h;y+=STEP){
-  ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(WORLD.w,y);ctx.stroke();
- }
+ ctx.fillStyle="#c7c8be";
+ for(let x=0;x<WORLD.w;x+=STEP){ctx.fillRect(x,0,7,WORLD.h);ctx.fillRect(x+ROAD-7,0,7,WORLD.h)}
+ for(let y=0;y<WORLD.h;y+=STEP){ctx.fillRect(0,y,WORLD.w,7);ctx.fillRect(0,y+ROAD-7,WORLD.w,7)}
+ ctx.strokeStyle="#f8e5a0";ctx.lineWidth=4;ctx.setLineDash([25,22]);
+ for(let x=ROAD/2;x<WORLD.w;x+=STEP){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,WORLD.h);ctx.stroke()}
+ for(let y=ROAD/2;y<WORLD.h;y+=STEP){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(WORLD.w,y);ctx.stroke()}
  ctx.setLineDash([]);
 }
-
 function drawBuildings(){
  for(const b of buildings){
-  ctx.fillStyle='#58636c';
-  ctx.fillRect(b.x+7,b.y+9,b.w,b.h);
-  ctx.fillStyle=b.color;
-  ctx.fillRect(b.x,b.y,b.w,b.h);
-  ctx.fillStyle='#ffffff70';
-  ctx.fillRect(b.x+6,b.y+6,b.w-12,8);
-  ctx.fillStyle='#5c8293';
-  for(let wx=b.x+12;wx<b.x+b.w-8;wx+=25){
-   for(let wy=b.y+22;wy<b.y+b.h-10;wy+=25){
-    ctx.fillRect(wx,wy,12,13);
-   }
-  }
-  ctx.fillStyle='#805d49';
-  ctx.fillRect(b.x+b.w/2-10,b.y+b.h-27,20,27);
+  ctx.fillStyle="#4a5662";ctx.fillRect(b.x+7,b.y+9,b.w,b.h);
+  ctx.fillStyle=b.color;ctx.fillRect(b.x,b.y,b.w,b.h);
+  ctx.fillStyle="#fff1c7";
+  for(let x=b.x+12;x<b.x+b.w-8;x+=25)
+   for(let y=b.y+20;y<b.y+b.h-10;y+=25)ctx.fillRect(x,y,12,13);
+  ctx.fillStyle="#795b49";ctx.fillRect(b.x+b.w/2-10,b.y+b.h-27,20,27);
  }
 }
-
-function drawMarker(p,color,label){
- ctx.fillStyle=color;
- ctx.beginPath();
- ctx.arc(p.x,p.y,24+Math.sin(performance.now()/200)*3,0,Math.PI*2);
- ctx.fill();
- ctx.fillStyle='#263747';
- ctx.font='bold 22px Arial';
- ctx.textAlign='center';ctx.textBaseline='middle';
- ctx.fillText(label,p.x,p.y);
+function marker(p,color,text){
+ ctx.fillStyle=color;ctx.beginPath();ctx.arc(p.x,p.y,23+Math.sin(performance.now()/180)*2,0,Math.PI*2);ctx.fill();
+ ctx.font="bold 22px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#263447";ctx.fillText(text,p.x,p.y);
 }
-
-function drawTraffic(){
- for(const car of traffic){
-  ctx.save();
-  ctx.translate(car.x,car.y);
-  let angle=car.vertical?Math.PI/2:0;
-  if(car.dir<0)angle+=Math.PI;
-  ctx.rotate(angle);
-
-  ctx.fillStyle='#27313a';
-  ctx.fillRect(-22,-14,12,7);
-  ctx.fillRect(10,-14,12,7);
-  ctx.fillRect(-22,7,12,7);
-  ctx.fillRect(10,7,12,7);
-
-  ctx.fillStyle=car.color;
-  ctx.fillRect(-22,-12,44,24);
-  ctx.fillStyle='#bdeaff';
-  ctx.fillRect(0,-9,12,18);
-  ctx.fillStyle='#fff2b2';
-  ctx.fillRect(17,-8,5,6);
-  ctx.fillRect(17,2,5,6);
+function drawCars(){
+ for(const car of cars){
+  // Chỉ vẽ xe ở gần camera để chạy mượt
+  if(car.x<camera.x-80||car.x>camera.x+canvas.clientWidth+80||car.y<camera.y-80||car.y>camera.y+canvas.clientHeight+80)continue;
+  ctx.save();ctx.translate(car.x,car.y);
+  let a=car.vertical?Math.PI/2:0;if(car.dir<0)a+=Math.PI;ctx.rotate(a);
+  ctx.fillStyle="#202934";
+  ctx.fillRect(-23,-15,13,8);ctx.fillRect(10,-15,13,8);
+  ctx.fillRect(-23,7,13,8);ctx.fillRect(10,7,13,8);
+  ctx.fillStyle=car.color;ctx.fillRect(-23,-12,46,24);
+  ctx.fillStyle="#b8eaff";ctx.fillRect(-3,-9,15,18);
+  ctx.fillStyle="#fff4b3";ctx.fillRect(18,-8,5,6);ctx.fillRect(18,2,5,6);
   ctx.restore();
  }
 }
-
 function drawPlayer(){
- ctx.save();
- ctx.translate(player.x,player.y);
- ctx.rotate(player.angle);
-
- ctx.fillStyle='#26323a';
- ctx.fillRect(-18,-15,13,8);
- ctx.fillRect(9,-15,13,8);
- ctx.fillRect(-18,7,13,8);
- ctx.fillRect(9,7,13,8);
-
- ctx.fillStyle='#09b9d3';
- ctx.beginPath();
- ctx.roundRect(-19,-12,38,24,7);
- ctx.fill();
-
- ctx.fillStyle='#eafaff';
- ctx.fillRect(1,-8,12,16);
-
- ctx.fillStyle='#ef5570';
- ctx.beginPath();
- ctx.arc(-7,0,9,0,Math.PI*2);
- ctx.fill();
-
- ctx.fillStyle='#fff0a8';
- ctx.fillRect(14,-7,5,5);
- ctx.fillRect(14,2,5,5);
-
- if(carrying){
-  ctx.fillStyle='#ffcf62';
-  ctx.fillRect(-10,-26,19,13);
-  ctx.strokeStyle='#fff';
-  ctx.strokeRect(-10,-26,19,13);
- }
+ ctx.save();ctx.translate(player.x,player.y);ctx.rotate(player.angle);
+ ctx.fillStyle="#202934";
+ ctx.fillRect(-18,-15,13,8);ctx.fillRect(9,-15,13,8);
+ ctx.fillRect(-18,7,13,8);ctx.fillRect(9,7,13,8);
+ ctx.fillStyle="#00b9d5";ctx.beginPath();ctx.roundRect(-19,-12,38,24,7);ctx.fill();
+ ctx.fillStyle="#dff8ff";ctx.fillRect(1,-8,12,16);
+ ctx.fillStyle="#ef5576";ctx.beginPath();ctx.arc(-7,0,9,0,Math.PI*2);ctx.fill();
+ if(carrying){ctx.fillStyle="#ffd15e";ctx.fillRect(-10,-26,19,13);ctx.strokeStyle="white";ctx.strokeRect(-10,-26,19,13)}
  ctx.restore();
 }
-
-function drawMini(){
- const w=mini.clientWidth,h=mini.clientHeight;
- mctx.clearRect(0,0,w,h);
- mctx.fillStyle='#9ccc85';mctx.fillRect(0,0,w,h);
-
- mctx.fillStyle='#69737c';
- for(let x=0;x<WORLD.w;x+=STEP)mctx.fillRect(x/WORLD.w*w,0,ROAD/WORLD.w*w,h);
- for(let y=0;y<WORLD.h;y+=STEP)mctx.fillRect(0,y/WORLD.h*h,w,ROAD/WORLD.h*h);
-
- mctx.fillStyle='#d6d1c2';
- for(const b of buildings){
-  mctx.fillRect(b.x/WORLD.w*w,b.y/WORLD.h*h,b.w/WORLD.w*w,b.h/WORLD.h*h);
- }
-
- function dot(p,color,r){
-  mctx.fillStyle=color;
-  mctx.beginPath();
-  mctx.arc(p.x/WORLD.w*w,p.y/WORLD.h*h,r,0,Math.PI*2);
-  mctx.fill();
- }
- if(!carrying)dot(packagePos,'#ffcf43',3);
- dot(target,'#ff72b6',3);
- for(const car of traffic)dot(car,'#ff4b4b',1.5);
- dot(player,'#00e5ff',4);
-
- mctx.strokeStyle='white';mctx.lineWidth=1;
- mctx.strokeRect(
-  camera.x/WORLD.w*w,camera.y/WORLD.h*h,
-  canvas.clientWidth/WORLD.w*w,canvas.clientHeight/WORLD.h*h
- );
+function drawMap(){
+ const w=map.clientWidth,h=map.clientHeight;
+ mc.clearRect(0,0,w,h);mc.fillStyle="#8dc779";mc.fillRect(0,0,w,h);
+ mc.fillStyle="#646d77";
+ for(let x=0;x<WORLD.w;x+=STEP)mc.fillRect(x/WORLD.w*w,0,ROAD/WORLD.w*w,h);
+ for(let y=0;y<WORLD.h;y+=STEP)mc.fillRect(0,y/WORLD.h*h,w,ROAD/WORLD.h*h);
+ mc.fillStyle="#d5d1c4";
+ for(const b of buildings)mc.fillRect(b.x/WORLD.w*w,b.y/WORLD.h*h,b.w/WORLD.w*w,b.h/WORLD.h*h);
+ function dot(p,c,r){mc.fillStyle=c;mc.beginPath();mc.arc(p.x/WORLD.w*w,p.y/WORLD.h*h,r,0,Math.PI*2);mc.fill()}
+ if(!carrying)dot(parcel,"#ffcf43",3);
+ dot(goal,"#ff72b6",3);
+ for(const car of cars)dot(car,"#ff4040",1.7);
+ dot(player,"#00e5ff",4);
+ mc.strokeStyle="white";mc.lineWidth=1;
+ mc.strokeRect(camera.x/WORLD.w*w,camera.y/WORLD.h*h,canvas.clientWidth/WORLD.w*w,canvas.clientHeight/WORLD.h*h);
 }
-
 function draw(){
- const vw=canvas.clientWidth,vh=canvas.clientHeight;
- ctx.clearRect(0,0,vw,vh);
- ctx.save();
- ctx.translate(-camera.x,-camera.y);
- drawRoads();
- drawBuildings();
- drawTraffic();
- if(!carrying)drawMarker(packagePos,'#ffcf43','📦');
- drawMarker(target,'#ff72b6','★');
- drawPlayer();
- ctx.restore();
- drawMini();
+ ctx.clearRect(0,0,canvas.clientWidth,canvas.clientHeight);
+ ctx.save();ctx.translate(-camera.x,-camera.y);
+ drawRoads();drawBuildings();drawCars();
+ if(!carrying)marker(parcel,"#ffcf43","📦");
+ marker(goal,"#ff72b6","★");drawPlayer();
+ ctx.restore();drawMap();
 }
-
-function frame(time){
- const dt=Math.min((time-last)/1000||0,0.035);
- last=time;
- update(dt);
- draw();
- if(toastUntil&&time>toastUntil){
-  document.getElementById('toast').style.display='none';
-  toastUntil=0;
- }
- requestAnimationFrame(frame);
+function frame(t){
+ const dt=Math.min((t-last)/1000||0,.035);last=t;
+ update(dt);draw();requestAnimationFrame(frame);
 }
-
-document.addEventListener('keydown',e=>{
- if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();
+document.addEventListener("keydown",e=>{
+ if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();
  keys[e.key]=true;
 });
-document.addEventListener('keyup',e=>keys[e.key]=false);
-window.addEventListener('blur',()=>{
- for(const k in keys)keys[k]=false;
- brake=false;
-});
-
-document.querySelectorAll('[data-key]').forEach(btn=>{
+document.addEventListener("keyup",e=>keys[e.key]=false);
+window.addEventListener("blur",()=>{for(const k in keys)keys[k]=false});
+document.querySelectorAll("[data-key]").forEach(btn=>{
  const k=btn.dataset.key;
- btn.addEventListener('pointerdown',e=>{
-  e.preventDefault();keys[k]=true;
-  btn.setPointerCapture(e.pointerId);
- });
- function release(){keys[k]=false;}
- btn.addEventListener('pointerup',release);
- btn.addEventListener('pointercancel',release);
- btn.addEventListener('lostpointercapture',release);
+ btn.addEventListener("pointerdown",e=>{e.preventDefault();keys[k]=true;btn.setPointerCapture(e.pointerId)});
+ const up=()=>keys[k]=false;
+ btn.addEventListener("pointerup",up);btn.addEventListener("pointercancel",up);btn.addEventListener("lostpointercapture",up);
 });
-
-const brakeButton=document.getElementById('brake');
-brakeButton.addEventListener('pointerdown',e=>{
- e.preventDefault();brake=true;
+document.querySelector("#play").addEventListener("click",()=>{
+ if(ended)reset();
+ running=true;document.querySelector("#overlay").style.display="none";
 });
-['pointerup','pointercancel','pointerleave','lostpointercapture'].forEach(ev=>{
- brakeButton.addEventListener(ev,()=>brake=false);
-});
-
-document.getElementById('play').addEventListener('click',()=>{
- if(gameOver||won)reset();
- running=true;
- document.getElementById('start').style.display='none';
-});
-
-document.getElementById('restart').addEventListener('click',reset);
-
-resize();
-reset();
-requestAnimationFrame(frame);
+document.querySelector("#restart").addEventListener("click",reset);
+resize();reset();requestAnimationFrame(frame);
 })();
 </script>
 </body>
