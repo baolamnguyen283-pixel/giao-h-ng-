@@ -3,164 +3,318 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Giao Hàng 2D 🛵</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Thành Phố Giao Hàng 2D 🛵</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#172033;color:white;font-family:Arial,sans-serif;text-align:center}
-h1{margin:12px 0;color:#ffe082}
-#info{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin:10px}
-canvas{display:block;width:min(96vw,800px);height:auto;margin:auto;border:3px solid white;border-radius:12px;background:#80c96b}
-button{border:0;border-radius:12px;padding:13px 19px;font-size:17px;font-weight:bold;cursor:pointer;background:#ffcf56;color:#243047}
-#controls{display:flex;justify-content:center;gap:10px;margin:12px auto;flex-wrap:wrap;max-width:360px}
-#controls button{width:65px;height:55px;font-size:24px;touch-action:none}
-#message{min-height:24px;color:#ffe082;font-weight:bold}
+body{margin:0;background:#172538;color:#fff;font-family:Arial,sans-serif;overflow:hidden}
+header{height:62px;background:#20344b;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;gap:8px}
+h1{font-size:clamp(16px,3vw,25px);margin:0;color:#ffe18b}
+.stats{display:flex;gap:14px;font-weight:bold;font-size:14px;flex-wrap:wrap}
+#wrap{position:relative;width:100vw;height:calc(100dvh - 62px);min-height:350px}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+#mission{position:absolute;top:12px;left:12px;background:#172538eF;border:1px solid #60758b;border-radius:13px;padding:12px 15px;width:min(245px,48vw);font-size:13px;line-height:1.6;pointer-events:none}
+#mission b{color:#ffe18b}
+#map{position:absolute;right:12px;top:12px;width:145px;height:110px;background:#fff;border:3px solid white;border-radius:10px}
+#hint{position:absolute;top:132px;right:12px;background:#172538d9;padding:8px;border-radius:8px;font-size:12px;max-width:155px}
+#toast{position:absolute;left:50%;top:18px;transform:translateX(-50%);background:#173c32;color:#fff4bd;padding:12px 18px;border-radius:12px;font-weight:bold;display:none;text-align:center;max-width:80%;pointer-events:none}
+#controls{position:absolute;bottom:16px;left:16px;display:grid;grid-template-columns:repeat(3,54px);grid-template-rows:repeat(2,50px);gap:5px}
+#controls button{border:1px solid #fff8;background:#263d55eF;color:white;border-radius:12px;font-size:23px;touch-action:none}
+#up{grid-column:2}#left{grid-column:1;grid-row:2}#down{grid-column:2;grid-row:2}#right{grid-column:3;grid-row:2}
+#actions{position:absolute;bottom:18px;right:14px;display:flex;flex-direction:column;gap:8px}
+button.action{background:#ffcf62;color:#243247;border:0;border-radius:12px;padding:12px;font-weight:bold;font-size:14px}
+#start{position:absolute;inset:0;background:#122235dd;display:flex;align-items:center;justify-content:center;padding:16px}
+.panel{background:#20374f;border:2px solid #7189a0;border-radius:22px;padding:24px;width:min(410px,94vw);text-align:center;box-shadow:0 12px 50px #0006}
+.panel h2{color:#ffe18b;margin-top:0}
+.panel p{line-height:1.6;color:#e0eaf2}
+.panel button{background:#ffcf62;border:0;border-radius:12px;padding:14px 24px;font-size:17px;font-weight:bold}
+@media(max-width:600px){
+ header{height:74px;align-items:flex-start;flex-direction:column;justify-content:center;gap:5px;padding:7px 10px}
+ .stats{font-size:12px;gap:12px}
+ #wrap{height:calc(100dvh - 74px)}
+ #mission{top:8px;left:8px;padding:8px;font-size:11px;width:155px}
+ #map{width:100px;height:78px;right:8px;top:8px}
+ #hint{top:92px;right:8px;font-size:10px;max-width:110px}
+ #controls{left:9px;bottom:10px;grid-template-columns:repeat(3,46px);grid-template-rows:repeat(2,43px)}
+ #controls button{font-size:19px}
+ #actions{right:9px;bottom:10px}
+ button.action{font-size:12px;padding:10px}
+}
 </style>
 </head>
 <body>
-<h1>🛵 GIAO HÀNG 2D</h1>
-<div id="info">
-<span>📦 Đơn: <b id="orders">0</b></span>
+<header>
+<h1>🏙️ Thành Phố Giao Hàng 2D</h1>
+<div class="stats">
+<span>📦 Đơn: <b id="orders">0</b>/10</span>
 <span>💰 Tiền: <b id="money">0</b>k</span>
 <span>⭐ Điểm: <b id="score">0</b></span>
 </div>
-<canvas id="game" width="800" height="520"></canvas>
-<div id="message">Nhận gói hàng màu vàng rồi giao đến điểm màu hồng!</div>
+</header>
+<div id="wrap">
+<canvas id="game"></canvas>
+<div id="mission">🛵 <b>NHIỆM VỤ</b><br><span id="task">Nhận gói hàng màu vàng!</span><br>Điểm giao: <b id="destination">Chưa có</b></div>
+<canvas id="map"></canvas>
+<div id="hint">⌨️ WASD / phím mũi tên<br>🚦 Né các tòa nhà nhé!</div>
+<div id="toast"></div>
 <div id="controls">
-<button data-key="ArrowUp">⬆️</button>
-<button data-key="ArrowLeft">⬅️</button>
-<button data-key="ArrowDown">⬇️</button>
-<button data-key="ArrowRight">➡️</button>
+<button id="up" data-key="ArrowUp">⬆️</button>
+<button id="left" data-key="ArrowLeft">⬅️</button>
+<button id="down" data-key="ArrowDown">⬇️</button>
+<button id="right" data-key="ArrowRight">➡️</button>
 </div>
-<button id="restart">🔄 Chơi lại</button>
-<p>Điều khiển bằng WASD, phím mũi tên hoặc các nút bên trên.</p>
+<div id="actions">
+<button class="action" id="brake">🛑 Phanh</button>
+<button class="action" id="restart">🔄 Chơi lại</button>
+</div>
+<div id="start">
+<div class="panel">
+<h2>🛵 GIAO HÀNG THÀNH PHỐ</h2>
+<p>Khám phá thành phố rộng lớn, nhận hàng và giao tận nơi để kiếm tiền!</p>
+<p>🗺️ Bản đồ lớn · 🏢 Nhiều khu phố<br>📦 10 đơn hàng · 💰 Thưởng 20k/đơn</p>
+<p>Điều khiển bằng WASD, phím mũi tên hoặc các nút trên màn hình.</p>
+<button id="play">BẮT ĐẦU CHƠI ▶</button>
+</div>
+</div>
+</div>
 <script>
-const c=document.getElementById("game"),ctx=c.getContext("2d");
-const W=c.width,H=c.height;
+(()=>{
+const canvas=document.getElementById('game');
+const ctx=canvas.getContext('2d');
+const mini=document.getElementById('map');
+const mctx=mini.getContext('2d');
+const WORLD={w:3200,h:2600};
+const ROAD=180, BLOCK=420, STEP=ROAD+BLOCK;
 const keys={};
-let player,packagePos,target,money,orders,score,gameOver,delivered;
-const buildings=[
-[25,25,110,75],[185,25,100,75],[350,25,115,75],[525,25,105,75],[675,25,100,75],
-[25,400,110,85],[185,400,100,85],[350,400,115,85],[525,400,105,85],[675,400,100,85],
-[25,150,110,75],[665,150,110,75],[25,280,110,75],[665,280,110,75]
-];
+let player,buildings,packagePos,target,carrying,orders,money,score,running,won;
+let camera={x:0,y:0};
+let toastUntil=0,last=0;
+let brake=false;
+const rand=(a,b)=>a+Math.random()*(b-a);
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+function resize(){
+const dpr=Math.min(window.devicePixelRatio||1,2);
+canvas.width=Math.round(canvas.clientWidth*dpr);
+canvas.height=Math.round(canvas.clientHeight*dpr);
+ctx.setTransform(dpr,0,0,dpr,0,0);
+mini.width=Math.round(mini.clientWidth*dpr);
+mini.height=Math.round(mini.clientHeight*dpr);
+mctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener('resize',resize);
+function roadPoint(){
+const vertical=Math.random()<.5;
+if(vertical){
+const x=ROAD/2+Math.floor(Math.random()*(WORLD.w/STEP))*STEP;
+return {x:Math.min(x,WORLD.w-40),y:rand(40,WORLD.h-40)};
+}
+const y=ROAD/2+Math.floor(Math.random()*(WORLD.h/STEP))*STEP;
+return {x:rand(40,WORLD.w-40),y:Math.min(y,WORLD.h-40)};
+}
+function makeBuildings(){
+buildings=[];
+for(let x=ROAD+10;x<WORLD.w-BLOCK;x+=STEP){
+for(let y=ROAD+10;y<WORLD.h-BLOCK;y+=STEP){
+const colors=['#f2b5a7','#d6c4f0','#a9d6cc','#f1d79b','#b6d2ef','#edc8a5'];
+for(let i=0;i<5;i++){
+let bx=x+25+(i%2)*170+rand(-8,15);
+let by=y+20+Math.floor(i/2)*125+rand(-8,10);
+let bw=105+rand(0,35),bh=80+rand(0,35);
+buildings.push({x:bx,y:by,w:bw,h:bh,color:colors[Math.floor(rand(0,colors.length))],seed:Math.random()});
+}
+}
+}
+}
+function freePoint(){
+for(let i=0;i<100;i++){
+const p=roadPoint();
+if(!blocked(p.x,p.y,15))return p;
+}
+return {x:90,y:90};
+}
+function blocked(x,y,r){
+if(x<r||y<r||x>WORLD.w-r||y>WORLD.h-r)return true;
+return buildings.some(b=>x+r>b.x&&x-r<b.x+b.w&&y+r>b.y&&y-r<b.y+b.h);
+}
 function reset(){
-player={x:400,y:260,a:0,speed:0};
-packagePos={x:400,y:125};target={x:600,y:260};
-money=0;orders=0;score=0;gameOver=false;delivered=false;
-document.getElementById("message").textContent="Đi lấy gói hàng màu vàng!";
-updateInfo();
+makeBuildings();
+player={x:90,y:90,angle:0};
+camera={x:0,y:0};
+packagePos=freePoint();
+target=freePoint();
+while(dist(target,packagePos)<500)target=freePoint();
+carrying=false;orders=0;money=0;score=0;won=false;running=false;
+document.getElementById('start').style.display='flex';
+document.getElementById('task').textContent='Nhận gói hàng màu vàng!';
+document.getElementById('destination').textContent='Chưa có';
+updateStats();
 }
-function updateInfo(){
-document.getElementById("orders").textContent=orders;
-document.getElementById("money").textContent=money;
-document.getElementById("score").textContent=score;
+function updateStats(){
+document.getElementById('orders').textContent=orders;
+document.getElementById('money').textContent=money;
+document.getElementById('score').textContent=score;
 }
-function circle(x,y,r,color){
-ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+function notify(text){
+const el=document.getElementById('toast');
+el.textContent=text;el.style.display='block';toastUntil=performance.now()+2200;
 }
-function drawRoad(){
-ctx.fillStyle="#80c96b";ctx.fillRect(0,0,W,H);
-ctx.fillStyle="#666d78";ctx.fillRect(0,110,W,280);
-ctx.fillStyle="#f8e9a1";
-for(let x=0;x<W;x+=70){ctx.fillRect(x,246,38,5);ctx.fillRect(x,270,38,5)}
-for(const [x,y,w,h] of buildings){
-ctx.fillStyle="#39445b";ctx.fillRect(x+5,y+7,w,h);
-ctx.fillStyle=["#ffadad","#a0c4ff","#ffd6a5","#caffbf","#d7baff"][Math.floor(x/20+y/10)%5];
-ctx.fillRect(x,y,w,h);
-ctx.fillStyle="#fff1bd";
-for(let wx=x+12;wx<x+w-8;wx+=28)
-for(let wy=y+12;wy<y+h-8;wy+=26)ctx.fillRect(wx,wy,12,12);
-ctx.fillStyle="#7b5545";ctx.fillRect(x+w/2-10,y+h-24,20,24);
-}
-}
-function drawPackage(){
-circle(packagePos.x,packagePos.y,19,"#ffe082");
-ctx.fillStyle="#805b25";ctx.fillRect(packagePos.x-10,packagePos.y-8,20,17);
-ctx.fillStyle="#fff1bd";ctx.fillRect(packagePos.x-2,packagePos.y-8,4,17);
-ctx.fillStyle="white";ctx.font="bold 13px Arial";ctx.textAlign="center";
-ctx.fillText("LẤY",packagePos.x,packagePos.y-27);
-}
-function drawTarget(){
-circle(target.x,target.y,24,"#ff6fae");
-circle(target.x,target.y,15,"#fff0f6");
-circle(target.x,target.y,7,"#ff6fae");
-ctx.fillStyle="white";ctx.font="bold 13px Arial";ctx.textAlign="center";
-ctx.fillText("GIAO",target.x,target.y-32);
-}
-function drawPlayer(){
-ctx.save();ctx.translate(player.x,player.y);ctx.rotate(player.a);
-ctx.fillStyle="#263238";ctx.fillRect(-17,-15,34,9);ctx.fillRect(-17,7,34,9);
-ctx.fillStyle="#00b7d8";ctx.fillRect(-23,-10,46,20);
-ctx.fillStyle="#fff";ctx.fillRect(1,-7,12,14);
-ctx.fillStyle="#ffdf80";ctx.fillRect(15,-6,8,12);
-ctx.fillStyle="#ef476f";ctx.beginPath();ctx.arc(-3,0,9,0,Math.PI*2);ctx.fill();
-ctx.restore();
-}
-function blocked(x,y){
-if(x<18||x>W-18||y<18||y>H-18)return true;
-return buildings.some(([bx,by,bw,bh])=>x>bx-18&&x<bx+bw+18&&y>by-18&&y<by+bh+18);
-}
-function distance(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
-function randomRoadPoint(){
-let p;
-do{
-p={x:130+Math.random()*540,y:125+Math.random()*265};
-}while(blocked(p.x,p.y));
-return p;
-}
-function frame(){
-drawRoad();
-if(!gameOver){
+function update(dt){
+if(!running||won)return;
 let dx=0,dy=0;
 if(keys.ArrowUp||keys.w||keys.W)dy--;
 if(keys.ArrowDown||keys.s||keys.S)dy++;
 if(keys.ArrowLeft||keys.a||keys.A)dx--;
 if(keys.ArrowRight||keys.d||keys.D)dx++;
 if(dx||dy){
-const len=Math.hypot(dx,dy);dx/=len;dy/=len;
-player.a=Math.atan2(dy,dx);
-let nx=player.x+dx*2.8,ny=player.y+dy*2.8;
-if(!blocked(nx,player.y))player.x=nx;
-if(!blocked(player.x,ny))player.y=ny;
+const l=Math.hypot(dx,dy);dx/=l;dy/=l;
+player.angle=Math.atan2(dy,dx);
+const speed=(brake?90:250)*dt;
+const nx=player.x+dx*speed,ny=player.y+dy*speed;
+if(!blocked(nx,player.y,17))player.x=nx;
+if(!blocked(player.x,ny,17))player.y=ny;
 }
-if(!delivered&&distance(player,packagePos)<29){
-delivered=true;
-document.getElementById("message").textContent="Đã lấy hàng! Đi đến điểm giao màu hồng!";
+if(!carrying&&dist(player,packagePos)<38){
+carrying=true;
+document.getElementById('task').textContent='Đang mang hàng đến điểm màu hồng!';
+document.getElementById('destination').textContent='Điểm giao hàng';
+notify('📦 Đã lấy hàng! Đi giao thôi!');
 }
-if(delivered&&distance(player,target)<33){
-money+=20;orders++;score+=100;delivered=false;
-packagePos=randomRoadPoint();target=randomRoadPoint();
-while(distance(packagePos,target)<130)target=randomRoadPoint();
-document.getElementById("message").textContent="Giao hàng thành công! +20k 🎉";
-updateInfo();
+if(carrying&&dist(player,target)<42){
+carrying=false;orders++;money+=20;score+=100;
+if(orders>=10){
+won=true;running=false;
+document.getElementById('task').textContent='Hoàn thành 10 đơn hàng!';
+notify('🎉 Tuyệt vời! Bạn đã giao đủ 10 đơn!');
+document.getElementById('start').style.display='flex';
+document.querySelector('#start h2').textContent='🏆 HOÀN THÀNH!';
+document.querySelector('#start p').textContent='Bạn đã giao 10 đơn hàng và kiếm được '+money+'k!';
+document.getElementById('play').textContent='CHƠI LẠI 🔄';
+}else{
+packagePos=freePoint();target=freePoint();
+while(dist(packagePos,target)<500)target=freePoint();
+document.getElementById('task').textContent='Nhận gói hàng màu vàng!';
+document.getElementById('destination').textContent='Chưa có';
+notify('💰 Giao thành công! +20k');
+}
+updateStats();
+}
+const vw=canvas.clientWidth,vh=canvas.clientHeight;
+camera.x=Math.max(0,Math.min(WORLD.w-vw,player.x-vw/2));
+camera.y=Math.max(0,Math.min(WORLD.h-vh,player.y-vh/2));
+}
+function drawCity(){
+const vw=canvas.clientWidth,vh=canvas.clientHeight;
+ctx.clearRect(0,0,vw,vh);
+ctx.save();ctx.translate(-camera.x,-camera.y);
+ctx.fillStyle='#9cce8b';ctx.fillRect(0,0,WORLD.w,WORLD.h);
+// Roads in a large grid
+ctx.fillStyle='#626c75';
+for(let x=0;x<WORLD.w;x+=STEP)ctx.fillRect(x,0,ROAD,WORLD.h);
+for(let y=0;y<WORLD.h;y+=STEP)ctx.fillRect(0,y,WORLD.w,ROAD);
+// Sidewalks
+ctx.fillStyle='#c8c9be';
+for(let x=0;x<WORLD.w;x+=STEP){ctx.fillRect(x,0,9,WORLD.h);ctx.fillRect(x+ROAD-9,0,9,WORLD.h);}
+for(let y=0;y<WORLD.h;y+=STEP){ctx.fillRect(0,y,WORLD.w,9);ctx.fillRect(0,y+ROAD-9,WORLD.w,9);}
+// Road markings
+ctx.strokeStyle='#f8e49a';ctx.lineWidth=4;ctx.setLineDash([25,22]);
+for(let x=ROAD/2;x<WORLD.w;x+=STEP){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,WORLD.h);ctx.stroke();}
+for(let y=ROAD/2;y<WORLD.h;y+=STEP){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(WORLD.w,y);ctx.stroke();}
+ctx.setLineDash([]);
+// Buildings
+for(const b of buildings){
+ctx.fillStyle='#5c6770';ctx.fillRect(b.x+8,b.y+10,b.w,b.h);
+ctx.fillStyle=b.color;ctx.fillRect(b.x,b.y,b.w,b.h);
+ctx.fillStyle='#ffffff66';ctx.fillRect(b.x+7,b.y+7,b.w-14,8);
+ctx.fillStyle='#648394';
+for(let wx=b.x+12;wx<b.x+b.w-10;wx+=25){
+for(let wy=b.y+24;wy<b.y+b.h-12;wy+=25){
+ctx.fillRect(wx,wy,12,13);
 }
 }
-if(!delivered)drawPackage();
-else drawTarget();
-if(delivered)drawTarget();
+ctx.fillStyle='#826653';ctx.fillRect(b.x+b.w/2-11,b.y+b.h-29,22,29);
+ctx.fillStyle='#f4e7bb';ctx.fillRect(b.x+b.w/2-2,b.y+b.h-29,4,29);
+}
+// Park decorations
+for(let x=ROAD+10;x<WORLD.w;x+=STEP)for(let y=ROAD+10;y<WORLD.h;y+=STEP){
+ctx.fillStyle='#8eb77c';
+ctx.beginPath();ctx.arc(x+370,y+350,18,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#527c50';ctx.fillRect(x+366,y+348,8,25);
+}
+drawMarker(packagePos,'#ffcb43','📦');
+drawMarker(target,'#ff72b6','★');
 drawPlayer();
-if(gameOver){
-ctx.fillStyle="rgba(0,0,0,.7)";ctx.fillRect(0,0,W,H);
-ctx.fillStyle="white";ctx.textAlign="center";ctx.font="bold 36px Arial";
-ctx.fillText("KẾT THÚC",W/2,H/2);
+ctx.restore();
+drawMini();
 }
+function drawMarker(p,color,label){
+ctx.fillStyle=color;ctx.beginPath();ctx.arc(p.x,p.y,25+Math.sin(performance.now()/200)*3,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#273746';ctx.font='bold 23px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,p.x,p.y);
+}
+function drawPlayer(){
+ctx.save();ctx.translate(player.x,player.y);ctx.rotate(player.angle);
+ctx.fillStyle='#29323a';ctx.fillRect(-20,-15,14,9);ctx.fillRect(8,-15,14,9);ctx.fillRect(-20,7,14,9);ctx.fillRect(8,7,14,9);
+ctx.fillStyle='#16b9d4';ctx.beginPath();ctx.roundRect(-18,-12,37,24,7);ctx.fill();
+ctx.fillStyle='#fff1b1';ctx.fillRect(8,-6,10,12);
+ctx.fillStyle='#f65e76';ctx.beginPath();ctx.arc(-5,0,9,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#ffdb8c';ctx.fillRect(-8,-5,6,5);
+ctx.fillStyle='#243347';ctx.fillRect(-16,-4,6,8);
+if(carrying){ctx.fillStyle='#ffcf62';ctx.fillRect(-10,-24,18,12);ctx.strokeStyle='#fff';ctx.strokeRect(-10,-24,18,12);}
+ctx.restore();
+}
+function drawMini(){
+const w=mini.clientWidth,h=mini.clientHeight;
+mctx.clearRect(0,0,w,h);mctx.fillStyle='#8fbd7d';mctx.fillRect(0,0,w,h);
+mctx.fillStyle='#66717b';
+for(let x=0;x<WORLD.w;x+=STEP)mctx.fillRect(x/WORLD.w*w,0,ROAD/WORLD.w*w,h);
+for(let y=0;y<WORLD.h;y+=STEP)mctx.fillRect(0,y/WORLD.h*h,w,ROAD/WORLD.h*h);
+mctx.fillStyle='#d8d5c9';
+for(const b of buildings)mctx.fillRect(b.x/WORLD.w*w,b.y/WORLD.h*h,b.w/WORLD.w*w,b.h/WORLD.h*h);
+function dot(p,col){mctx.fillStyle=col;mctx.beginPath();mctx.arc(p.x/WORLD.w*w,p.y/WORLD.h*h,4,0,Math.PI*2);mctx.fill();}
+if(!carrying)dot(packagePos,'#ffcb43');
+dot(target,'#ff72b6');dot(player,'#00e5ff');
+mctx.strokeStyle='#fff';mctx.lineWidth=1;
+mctx.strokeRect(camera.x/WORLD.w*w,camera.y/WORLD.h*h,canvas.clientWidth/WORLD.w*w,canvas.clientHeight/WORLD.h*h);
+}
+function frame(t){
+const dt=Math.min((t-last)/1000||0,.035);last=t;
+update(dt);drawCity();
+if(toastUntil&&t>toastUntil){document.getElementById('toast').style.display='none';toastUntil=0;}
 requestAnimationFrame(frame);
 }
-document.addEventListener("keydown",e=>{
-if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();
+document.addEventListener('keydown',e=>{
+if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();
 keys[e.key]=true;
 });
-document.addEventListener("keyup",e=>keys[e.key]=false);
-document.querySelectorAll("[data-key]").forEach(btn=>{
+document.addEventListener('keyup',e=>keys[e.key]=false);
+window.addEventListener('blur',()=>{for(const k in keys)keys[k]=false;});
+document.querySelectorAll('[data-key]').forEach(btn=>{
 const k=btn.dataset.key;
-btn.addEventListener("pointerdown",e=>{e.preventDefault();keys[k]=true;btn.setPointerCapture(e.pointerId)});
-btn.addEventListener("pointerup",()=>keys[k]=false);
-btn.addEventListener("pointercancel",()=>keys[k]=false);
-btn.addEventListener("lostpointercapture",()=>keys[k]=false);
+btn.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true;btn.setPointerCapture(e.pointerId);});
+function release(){keys[k]=false;}
+btn.addEventListener('pointerup',release);
+btn.addEventListener('pointercancel',release);
+btn.addEventListener('lostpointercapture',release);
 });
-document.getElementById("restart").addEventListener("click",reset);
-reset();frame();
+document.getElementById('brake').addEventListener('pointerdown',()=>brake=true);
+['pointerup','pointercancel','pointerleave'].forEach(ev=>document.getElementById('brake').addEventListener(ev,()=>brake=false));
+document.getElementById('play').addEventListener('click',()=>{
+if(won){
+document.querySelector('#start h2').textContent='🛵 GIAO HÀNG THÀNH PHỐ';
+document.querySelector('#start p').textContent='Khám phá thành phố rộng lớn, nhận hàng và giao tận nơi để kiếm tiền!';
+document.getElementById('play').textContent='BẮT ĐẦU CHƠI ▶';
+reset();
+}
+running=true;
+document.getElementById('start').style.display='none';
+});
+document.getElementById('restart').addEventListener('click',()=>{
+document.querySelector('#start h2').textContent='🛵 GIAO HÀNG THÀNH PHỐ';
+document.querySelector('#start p').textContent='Khám phá thành phố rộng lớn, nhận hàng và giao tận nơi để kiếm tiền!';
+document.getElementById('play').textContent='BẮT ĐẦU CHƠI ▶';
+reset();
+});
+resize();reset();requestAnimationFrame(frame);
+})();
 </script>
 </body>
 </html>
