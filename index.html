@@ -3,317 +3,486 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Giao Hàng 3D</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Giao Hàng Phố Nhỏ</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:#8bd0f4;overflow:hidden}
-canvas{display:block}
-#game{width:100vw;height:100vh}
-.panel{position:fixed;background:#142331ee;color:white;padding:12px;border-radius:12px;z-index:2}
-#top{top:10px;left:10px;right:10px;display:flex;justify-content:space-between}
-#info{top:75px;left:10px;width:180px;font-size:13px}
-#map{right:10px;bottom:110px;width:110px;height:110px;background:#cbd5c8;border:2px solid white}
-button,input,select{padding:10px;border:0;border-radius:8px;margin:3px}
-button{background:#ffca45;font-weight:bold;cursor:pointer;touch-action:none}
-#controls{position:fixed;bottom:10px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:end}
-#controls button{min-width:42px;min-height:42px}
-#start{position:fixed;inset:0;background:#102b3bea;color:white;z-index:5;display:grid;place-items:center;padding:15px;text-align:center}
-#box{background:#173b4b;padding:25px;border-radius:20px;width:min(400px,100%)}
-#box input,#box select{width:100%;margin:6px 0}
-@media(max-width:500px){#info{width:150px;font-size:11px;padding:8px}#map{width:90px;height:90px}}
+body{margin:0;background:#101827;color:white;font-family:Arial,sans-serif}
+main{max-width:1000px;margin:auto;padding:14px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+h1{font-size:clamp(22px,4vw,32px);margin:0}
+.muted,.help{color:#b9c6d8;font-size:13px;margin-top:5px;line-height:1.5}
+.stats{display:flex;gap:8px;flex-wrap:wrap}
+.stat{background:#202d41;border:1px solid #3c4b62;border-radius:12px;padding:9px;font-weight:bold;font-size:13px}
+.stage{position:relative;overflow:hidden;border:2px solid #34445c;border-radius:18px;background:#9bdcf5}
+canvas{display:block;width:100%;height:auto;aspect-ratio:16/9}
+.overlay{position:absolute;inset:0;display:grid;place-items:center;background:#0c1726c9;padding:16px}
+.panel{max-width:440px;width:100%;padding:22px;background:#19283df5;border:1px solid #52647d;border-radius:20px;text-align:center}
+.panel h2{font-size:26px;margin:0 0 8px}
+.panel p{color:#d2deed;line-height:1.5;font-size:14px}
+button{font:inherit;font-weight:bold;border:0;border-radius:12px;padding:11px 14px;cursor:pointer;touch-action:none;user-select:none}
+.primary{background:#8cf0c2;color:#12382a}
+.secondary{background:#293b54;color:white;border:1px solid #506580}
+button:active{filter:brightness(1.15)}
+.bottom{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:12px}
+.pad{display:grid;grid-template-columns:52px 52px 52px;grid-template-rows:46px 46px;gap:6px}
+.pad button{padding:0;background:#24354c;color:white;border:1px solid #536883;font-size:20px}
+.up{grid-column:2;grid-row:1}
+.left{grid-column:1;grid-row:2}
+.down{grid-column:2;grid-row:2}
+.right{grid-column:3;grid-row:2}
+.actionrow{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:540px){
+ main{padding:8px}.panel{padding:14px}
+ .bottom{justify-content:center}.actionrow{justify-content:center}
+}
 </style>
 </head>
 <body>
-<canvas id="game"></canvas>
+<main>
+<header>
+ <div>
+  <h1>🛵 Giao Hàng Phố Nhỏ</h1>
+  <div class="muted">Lái xe trong thành phố • Giao đơn • Nhận thưởng</div>
+ </div>
+ <div class="stats">
+  <div class="stat">📦 Đơn: <span id="orders">0</span></div>
+  <div class="stat">💵 Tiền: <span id="cash">0</span>đ</div>
+  <div class="stat">🚦 Tốc độ: <span id="spd">0</span></div>
+ </div>
+</header>
 
-<div id="top" class="panel">
-  <b>🏍️ GIAO HÀNG 3D<br><span id="driver">Tài xế</span></b>
-  <span>📦 <b id="score">0/5</b><br>💰 <b id="money">0đ</b></span>
-</div>
-
-<div id="info" class="panel">
-  <b>📱 NHIỆM VỤ</b><hr>
-  <div id="mission">Bắt đầu để nhận đơn.</div>
-  <p id="status">Chọn Bắt đầu chơi.</p>
-  <button onclick="toggleRide()">🏍️ Lên/xuống xe</button>
-  <button onclick="interact()">📦 Nhận/Giao (G)</button>
-  <p>WASD hoặc phím mũi tên để lái xe.</p>
-</div>
-
-<canvas id="map" width="180" height="180"></canvas>
-
-<div id="controls">
-  <div>
-    <div><button data-key="ArrowUp">⬆️</button></div>
-    <button data-key="ArrowLeft">⬅️</button>
-    <button data-key="ArrowDown">⬇️</button>
-    <button data-key="ArrowRight">➡️</button>
+<div class="stage">
+ <canvas id="view" width="960" height="540"></canvas>
+ <div class="overlay" id="cover">
+  <div class="panel">
+   <h2 id="title">Bắt đầu ca giao hàng!</h2>
+   <p id="message">Dùng phím mũi tên hoặc WASD để lái xe. Đến vòng giao hàng màu vàng để nhận 500đ mỗi đơn.</p>
+   <button class="primary" id="start">Bắt đầu chơi</button>
   </div>
-  <button onclick="toggleRide()">🏍️ Lên/xuống xe</button>
+ </div>
 </div>
 
-<div id="start">
-  <div id="box">
-    <div style="font-size:45px">🏍️📦🏙️</div>
-    <h1>GIAO HÀNG 3D</h1>
-    <p>Lái xe nhận đơn và giao hàng kiếm tiền!</p>
-    <input id="name" maxlength="20" placeholder="Tên tài xế">
-    <select id="difficulty">
-      <option value="1">🌱 Dễ</option>
-      <option value="1.5">🔥 Khó</option>
-    </select>
-    <button style="width:100%" onclick="startGame()">BẮT ĐẦU CHƠI ▶</button>
-  </div>
+<div class="bottom">
+ <div class="pad">
+  <button class="up" data-k="up">▲</button>
+  <button class="left" data-k="left">◀</button>
+  <button class="down" data-k="down">▼</button>
+  <button class="right" data-k="right">▶</button>
+ </div>
+ <div class="actionrow">
+  <button class="secondary" id="brake">🛑 Phanh</button>
+  <button class="secondary" id="restart">↻ Chơi lại</button>
+ </div>
 </div>
+<div class="help">
+ Máy tính: ↑/W tiến, ↓/S lùi, ←/A rẽ trái, →/D rẽ phải.
+ Giữ nút để điều khiển. Đi đến vòng vàng để giao hàng.
+</div>
+</main>
 
 <script>
-const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
-const map=document.getElementById("map");
-const mc=map.getContext("2d");
+(()=>{
+const c=document.getElementById('view');
+const g=c.getContext('2d');
+const W=960,H=540;
+const el=id=>document.getElementById(id);
+const keys={up:false,down:false,left:false,right:false};
 
-let W,H,scale;
-function resize(){
-  W=innerWidth; H=innerHeight;
-  scale=Math.min(devicePixelRatio||1,2);
-  canvas.width=W*scale; canvas.height=H*scale;
-  canvas.style.width=W+"px"; canvas.style.height=H+"px";
-  ctx.setTransform(scale,0,0,scale,0,0);
+let active=false,last=0,roadMove=0;
+let steer=0,velocity=0,orders=0,cash=0;
+let dropZ=760,dropLane=0,flash=0;
+
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+function stats(){
+ el('orders').textContent=orders;
+ el('cash').textContent=cash.toLocaleString('vi-VN');
+ el('spd').textContent=Math.round(velocity*18);
 }
-addEventListener("resize",resize);resize();
 
-let running=false,riding=false,keys={};
-let speedFactor=1,last=0,money=0,delivered=0;
-const player={x:0,z:0,a:0};
+function poly(points,color,stroke){
+ g.beginPath();
+ g.moveTo(points[0][0],points[0][1]);
+ for(let i=1;i<points.length;i++)g.lineTo(points[i][0],points[i][1]);
+ g.closePath();
+ g.fillStyle=color;
+ g.fill();
+ if(stroke){g.strokeStyle=stroke;g.stroke();}
+}
 
-const places=[
- {x:0,z:300,name:"Bưu điện",icon:"🏤"},
- {x:100,z:600,name:"Quán cà phê",icon:"☕"},
- {x:-100,z:900,name:"Siêu thị",icon:"🛒"},
- {x:100,z:1200,name:"Nhà hàng",icon:"🍜"},
- {x:-100,z:1500,name:"Cửa hàng",icon:"🏪"},
- {x:100,z:1800,name:"Khách sạn",icon:"🏨"},
- {x:-100,z:2100,name:"Công viên",icon:"🌳"}
-];
+function rect(x,y,w,h,color){
+ g.fillStyle=color;
+ g.fillRect(x,y,w,h);
+}
 
-let order=null,phase="pickup";
+function line(x1,y1,x2,y2,color,width=1){
+ g.beginPath();
+ g.moveTo(x1,y1);g.lineTo(x2,y2);
+ g.strokeStyle=color;g.lineWidth=width;g.stroke();
+}
 
-function startGame(){
- document.getElementById("start").style.display="none";
- document.getElementById("driver").textContent=
-   document.getElementById("name").value.trim()||"Tài xế";
- speedFactor=Number(document.getElementById("difficulty").value);
- running=true;
- newMission();
+function projection(z){
+ const t=clamp(1-z/1000,0,1);
+ return {
+  t,
+  y:188+t*t*352,
+  half:20+t*315,
+  cx:480+Math.sin(roadMove*.004+z*.001)*5*t
+ };
+}
+
+function sky(){
+ const grad=g.createLinearGradient(0,0,0,250);
+ grad.addColorStop(0,'#72cafa');
+ grad.addColorStop(1,'#e3f8ff');
+ rect(0,0,W,H,grad);
+
+ // Mây
+ g.fillStyle='#fff9';
+ g.beginPath();
+ g.ellipse(130,75,42,15,0,0,Math.PI*2);
+ g.ellipse(160,72,26,20,0,0,Math.PI*2);
+ g.ellipse(187,78,37,13,0,0,Math.PI*2);
+ g.fill();
+
+ rect(0,188,W,H-188,'#87c875');
+
+ // Nhà xa ở đường chân trời
+ for(let i=0;i<20;i++){
+  const x=i*53-(roadMove*.12%53);
+  const hh=25+(i*23%52);
+  rect(x,188-hh,38,hh,i%2?'#a9c9d5':'#bfd8df');
+  for(let yy=194-hh;yy<181;yy+=12)
+   rect(x+7,yy,5,5,'#edf8f8');
+ }
+}
+
+function road(){
+ // Một mặt đường hình thang ổn định
+ poly([[452,188],[508,188],[850,540],[110,540]],'#555f6b');
+
+ // Vỉa hè hai bên
+ poly([[444,188],[452,188],[110,540],[0,540]],'#d9d5c7');
+ poly([[508,188],[516,188],[960,540],[850,540]],'#d9d5c7');
+
+ line(452,188,110,540,'#fff1cf',3);
+ line(508,188,850,540,'#fff1cf',3);
+
+ // Vạch đường theo phối cảnh
+ for(let i=0;i<15;i++){
+  const z=(i*82+roadMove*2)%1000;
+  const a=projection(z);
+  const b=projection(Math.min(z+31,1000));
+  if(a.y<188||b.y<188)continue;
+
+  for(const side of [-.34,.34]){
+   const x1=a.cx+side*a.half;
+   const x2=b.cx+side*b.half;
+   poly([
+    [x1-1.5,a.y],[x1+1.5,a.y],
+    [x2+2,b.y],[x2-2,b.y]
+   ],'#fff1a6');
+  }
+ }
+}
+
+function buildings(){
+ for(const side of [-1,1]){
+  for(let i=0;i<9;i++){
+   let z=(i*128+roadMove*1.15)%1040;
+   if(z<25)z+=1040;
+
+   const p=projection(z);
+   const s=.13+p.t*.78;
+   const bw=(38+(i%3)*12)*s;
+   const bh=(100+(i*31%65))*s;
+
+   let x=p.cx+side*(p.half+14+p.t*28);
+   if(side<0)x-=bw;
+   const y=p.y-bh;
+
+   if(y>540||p.y<190)continue;
+
+   const cols=['#f2bd8d','#e5a0a1','#a9cce9','#eadb9e','#b6d7bd'];
+   const col=cols[(i+(side===1?2:0))%cols.length];
+
+   rect(x+4*s,y+4*s,bw,bh,'#0002');
+   rect(x,y,bw,bh,col);
+
+   // Mái và mặt bên nhà
+   poly([
+    [x,y],[x+bw,y],
+    [x+bw+bw*.12,y-bw*.06],
+    [x+bw*.12,y-bw*.06]
+   ],'#f9d8b5');
+
+   poly([
+    [x+bw,y],[x+bw+bw*.12,y-bw*.06],
+    [x+bw+bw*.12,p.y-bw*.06],[x+bw,p.y]
+   ],'#8798a1');
+
+   // Cửa sổ
+   const rows=Math.max(1,Math.floor(bh/24));
+   for(let r=0;r<rows;r++){
+    for(let cc=0;cc<2;cc++){
+     rect(
+      x+bw*(.2+cc*.45),
+      y+7*s+r*(bh-12*s)/rows,
+      Math.max(2,bw*.16),
+      Math.max(3,5*s),
+      '#fff0c2'
+     );
+    }
+   }
+
+   rect(x+bw*.42,p.y-bh*.23,bw*.19,bh*.23,'#6e8768');
+  }
+ }
+}
+
+function delivery(){
+ if(dropZ<0||dropZ>1000)return;
+
+ const p=projection(dropZ);
+ const x=p.cx+dropLane*p.half*.34;
+ const s=.22+p.t*1.05;
+
+ g.fillStyle='#ffd94f';
+ g.beginPath();
+ g.ellipse(x,p.y,18*s,6*s,0,0,Math.PI*2);
+ g.fill();
+
+ g.fillStyle='#fff3a5';
+ g.beginPath();
+ g.arc(x,p.y-20*s,10*s,0,Math.PI*2);
+ g.fill();
+
+ g.fillStyle='#7d5011';
+ g.font=`bold ${Math.max(8,14*s)}px system-ui`;
+ g.textAlign='center';
+ g.fillText('📦',x,p.y-16*s);
+ g.textAlign='left';
+}
+
+function bike(){
+ const x=480+steer*160;
+ const y=433;
+
+ // Bóng xe
+ g.fillStyle='#0004';
+ g.beginPath();
+ g.ellipse(x,y+26,46,12,0,0,Math.PI*2);
+ g.fill();
+
+ // Bánh xe
+ g.fillStyle='#1b2634';
+ g.beginPath();
+ g.ellipse(x,y+14,12,23,0,0,Math.PI*2);
+ g.ellipse(x,y-27,10,17,0,0,Math.PI*2);
+ g.fill();
+
+ // Thân xe
+ poly([
+  [x-20,y-26],[x-14,y-43],[x+11,y-42],
+  [x+22,y-22],[x+14,y+3],[x-17,y+3]
+ ],'#13a9a2');
+
+ poly([
+  [x-13,y-42],[x-6,y-53],
+  [x+10,y-49],[x+11,y-42]
+ ],'#e9fbff');
+
+ // Hộp giao hàng
+ poly([
+  [x-25,y-56],[x+21,y-56],
+  [x+18,y-37],[x-22,y-37]
+ ],'#ffb84c','#8d5b24');
+
+ line(x-3,y-55,x-3,y-38,'#8d5b24',2);
+ line(x-18,y-40,x-31,y-48,'#26384c',5);
+ line(x+18,y-40,x+31,y-48,'#26384c',5);
+
+ // Đèn và mũ bảo hiểm
+ g.fillStyle='#fff5b5';
+ g.beginPath();
+ g.ellipse(x,y-24,7,4,0,0,Math.PI*2);
+ g.fill();
+
+ g.fillStyle='#2e4261';
+ g.beginPath();
+ g.arc(x,y-65,15,Math.PI,Math.PI*2);
+ g.lineTo(x+15,y-61);
+ g.lineTo(x-14,y-61);
+ g.fill();
+
+ rect(x+2,y-66,10,4,'#b9efff');
+}
+
+function hud(){
+ g.fillStyle='#14273dcc';
+ g.beginPath();
+ g.roundRect(15,15,194,48,12);
+ g.fill();
+
+ g.fillStyle='#fff';
+ g.font='bold 16px system-ui';
+ g.fillText('📍 Điểm giao hàng',28,35);
+
+ g.font='13px system-ui';
+ g.fillStyle='#d9f8e9';
+ g.fillText('Đến vòng tròn màu vàng',28,52);
+
+ if(flash>0){
+  g.fillStyle='#153b2ddd';
+  g.beginPath();
+  g.roundRect(310,78,340,48,14);
+  g.fill();
+
+  g.fillStyle='#a9ffd5';
+  g.font='bold 19px system-ui';
+  g.textAlign='center';
+  g.fillText('Giao thành công! +500đ',480,108);
+  g.textAlign='left';
+ }
+}
+
+function draw(){
+ sky();
+ road();
+ buildings();
+ delivery();
+ bike();
+ hud();
+}
+
+function reset(){
+ active=false;last=0;roadMove=0;
+ steer=0;velocity=0;orders=0;cash=0;
+ dropZ=760;dropLane=0;flash=0;
+
+ Object.keys(keys).forEach(k=>keys[k]=false);
+ stats();draw();
+
+ el('title').textContent='Bắt đầu ca giao hàng!';
+ el('message').textContent='Dùng phím mũi tên/WASD hoặc nút bên dưới. Đến vòng giao hàng màu vàng để nhận 500đ mỗi đơn.';
+ el('start').textContent='Bắt đầu chơi';
+ el('cover').style.display='grid';
+}
+
+function start(){
+ if(active)return;
+ active=true;
+ el('cover').style.display='none';
  last=0;
  requestAnimationFrame(loop);
 }
 
-function newMission(){
- if(delivered>=5){
-  order=null;
-  document.getElementById("mission").textContent="🏆 Hoàn thành 5 đơn!";
-  document.getElementById("status").textContent="Bạn đã thắng!";
-  return;
- }
- let a=Math.floor(Math.random()*places.length),b;
- do{b=Math.floor(Math.random()*places.length)}while(a===b);
- order={from:places[a],to:places[b]};
- phase="pickup";
- updateMission();
-}
+function loop(now){
+ if(!active)return;
 
-function updateMission(){
- if(!order)return;
- let p=phase==="pickup"?order.from:order.to;
- document.getElementById("mission").innerHTML=
- (phase==="pickup"?"📦 Đến nhận hàng:":"🎯 Đến giao hàng:")+
- "<br><b>"+p.icon+" "+p.name+"</b>";
- document.getElementById("status").textContent=
- phase==="pickup"?"Lái đến điểm nhận hàng.":"Đã nhận hàng, đi giao cho khách!";
-}
+ const dt=Math.min((now-last)/16.67||1,2);
+ last=now;
 
-function toggleRide(){
- if(!running)return;
- riding=!riding;
- document.getElementById("status").textContent=
- riding?"Đã lên xe! Dùng W hoặc ↑ để chạy.":"Đã xuống xe.";
-}
+ // Tiến, lùi và giảm tốc khi thả phím
+ velocity=clamp(
+  velocity+(keys.up?.16:keys.down?-.22:-.035)*dt,
+  0,5.5
+ );
 
-function interact(){
- if(!running||!order)return;
- const p=phase==="pickup"?order.from:order.to;
- if(Math.hypot(player.x-p.x,player.z-p.z)>110){
-  document.getElementById("status").textContent=
-   "Chưa đến nơi! Hãy lái gần điểm nhiệm vụ.";
-  return;
- }
- if(phase==="pickup"){
-  phase="drop";updateMission();
- }else{
-  delivered++;money+=20000;
-  document.getElementById("score").textContent=delivered+"/5";
-  document.getElementById("money").textContent=
-   money.toLocaleString("vi-VN")+"đ";
-  newMission();
- }
-}
+ // Rẽ trái và phải
+ if(keys.left)steer-=.035*dt*(.6+velocity/3);
+ if(keys.right)steer+=.035*dt*(.6+velocity/3);
+ steer=clamp(steer,-1.3,1.3);
 
-function move(dt){
- if(!riding)return;
- const forward=(keys.ArrowUp||keys.w||keys.W?1:0)-
-               (keys.ArrowDown||keys.s||keys.S?1:0);
- const turn=(keys.ArrowRight||keys.d||keys.D?1:0)-
-            (keys.ArrowLeft||keys.a||keys.A?1:0);
- player.a+=turn*2*dt;
- const velocity=forward*190*speedFactor*dt;
- player.x+=Math.sin(player.a)*velocity;
- player.z+=Math.cos(player.a)*velocity;
+ roadMove+=velocity*dt*2.1;
+ dropZ-=velocity*dt*2.6;
 
- // Giới hạn xe trong khu vực chơi, không khóa điểm xuất phát.
- player.x=Math.max(-240,Math.min(240,player.x));
- player.z=Math.max(-50,Math.min(2600,player.z));
-}
-
-function project(x,z){
- const dx=x-player.x,dz=z-player.z;
- const ca=Math.cos(player.a),sa=Math.sin(player.a);
- const depth=dx*sa+dz*ca;
- const side=dx*ca-dz*sa;
- if(depth<20)return null;
- const s=380/depth;
- return {x:W/2+side*s,y:H*.48-175*s,s,depth};
-}
-
-function polygon(points,color){
- ctx.fillStyle=color;ctx.beginPath();
- ctx.moveTo(points[0][0],points[0][1]);
- for(let i=1;i<points.length;i++)ctx.lineTo(points[i][0],points[i][1]);
- ctx.closePath();ctx.fill();
-}
-
-function building(x,z,n){
- const p=project(x,z);
- if(!p||p.s<.025||p.s>4||p.x<-150||p.x>W+150)return;
- const w=65*p.s,h=(95+(n%3)*15)*p.s;
- ctx.fillStyle=["#d6e4e8","#e9cfb1","#bdcfc2","#cbd8e1"][n%4];
- ctx.fillRect(p.x-w/2,p.y-h,w,h);
- ctx.fillStyle="#59788b";
- for(let r=0;r<3;r++)for(let c=0;c<2;c++){
-  ctx.fillRect(p.x-w*.27+c*w*.42,
-    p.y-h+(14+r*22)*p.s,
-    Math.max(2,8*p.s),Math.max(2,10*p.s));
- }
-}
-
-function drawWorld(){
- const sky=ctx.createLinearGradient(0,0,0,H);
- sky.addColorStop(0,"#69b9f5");
- sky.addColorStop(.55,"#d5eff9");
- sky.addColorStop(.56,"#8aa875");
- sky.addColorStop(1,"#53614d");
- ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
-
- // Đường rộng, có lề hai bên.
- polygon([[W*.42,H*.53],[W*.58,H*.53],[W*1.08,H],[W*-.08,H]],"#484f53");
- polygon([[W*.42,H*.53],[W*.44,H*.53],[W*.23,H],[W*.04,H]],"#8aa875");
- polygon([[W*.56,H*.53],[W*.58,H*.53],[W*.96,H],[W*.77,H]],"#8aa875");
-
- // Nhà nằm ngoài lề đường.
- for(let z=Math.floor((player.z+100)/140)*140;
-     z<player.z+1800;z+=140){
-  const n=Math.floor(z/140);
-  building(-190,z,n*2+1);
-  building(190,z,n*2+2);
+ // Giao đơn khi đến gần điểm vàng
+ if(dropZ<30&&dropZ>-60&&Math.abs(steer-dropLane*.75)<.42){
+  orders++;
+  cash+=500;
+  flash=70;
+  dropZ=950;
+  dropLane=[-1,0,1][Math.floor(Math.random()*3)];
+ }else if(dropZ<-60){
+  dropZ=950;
+  dropLane=[-1,0,1][Math.floor(Math.random()*3)];
  }
 
- // Vạch giữa đường.
- for(let z=Math.floor((player.z+80)/100)*100;
-     z<player.z+1000;z+=100){
-  const p=project(0,z);
-  if(p){
-   ctx.fillStyle="#ffe9a0";
-   ctx.fillRect(p.x-2*p.s,p.y,Math.max(2,4*p.s),Math.max(3,32*p.s));
-  }
- }
+ if(flash>0)flash-=dt;
 
- // Điểm nhận/giao hàng.
- if(order){
-  const p=phase==="pickup"?order.from:order.to;
-  const pt=project(p.x,p.z);
-  if(pt&&pt.depth<1500){
-   ctx.textAlign="center";
-   ctx.font="bold "+Math.max(14,24*pt.s)+"px Arial";
-   ctx.fillStyle="white";
-   ctx.fillText(phase==="pickup"?"📦":"🎯",pt.x,pt.y-25*pt.s);
-   ctx.fillText(p.name,pt.x,pt.y-45*pt.s);
-  }
- }
-
- // Hình xe ở phía dưới màn hình.
- if(riding){
-  polygon([[W*.24,H],[W*.35,H*.8],[W*.65,H*.8],[W*.76,H]],"#242a30");
-  ctx.fillStyle="#e33e48";
-  ctx.fillRect(W*.44,H*.82,W*.12,H*.07);
-  ctx.strokeStyle="#111";ctx.lineWidth=7;ctx.beginPath();
-  ctx.moveTo(W*.5,H*.85);ctx.lineTo(W*.31,H*.77);
-  ctx.moveTo(W*.5,H*.85);ctx.lineTo(W*.69,H*.77);
-  ctx.stroke();
- }else{
-  ctx.textAlign="center";ctx.font="40px Arial";
-  ctx.fillText("🧍",W/2,H*.8);
- }
-}
-
-function drawMap(){
- mc.clearRect(0,0,180,180);
- mc.fillStyle="#cbd5c8";mc.fillRect(0,0,180,180);
- mc.strokeStyle="white";mc.lineWidth=13;
- mc.beginPath();mc.moveTo(90,0);mc.lineTo(90,180);mc.stroke();
-
- function dot(x,z,color,r){
-  mc.fillStyle=color;mc.beginPath();
-  mc.arc(90+x*.23,165-(z-player.z)*.055,r,0,Math.PI*2);
-  mc.fill();
- }
- places.forEach(p=>dot(p.x,p.z,"#519e64",4));
- dot(player.x,player.z,"#e63e4b",6);
- if(order){
-  const p=phase==="pickup"?order.from:order.to;
-  dot(p.x,p.z,"#ffc83d",6);
- }
-}
-
-function loop(time){
- if(!running)return;
- const dt=last?Math.min((time-last)/1000,.04):.016;
- last=time;
- move(dt);drawWorld();drawMap();
+ stats();
+ draw();
  requestAnimationFrame(loop);
 }
 
-addEventListener("keydown",e=>{
- keys[e.key]=true;
- if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(e.key))
-  e.preventDefault();
- if(e.key.toLowerCase()==="g")interact();
- if(e.key.toLowerCase()==="e")toggleRide();
-});
-addEventListener("keyup",e=>keys[e.key]=false);
+const keymap={
+ arrowup:'up',w:'up',
+ arrowdown:'down',s:'down',
+ arrowleft:'left',a:'left',
+ arrowright:'right',d:'right'
+};
 
-document.querySelectorAll("[data-key]").forEach(button=>{
- const key=button.dataset.key;
- button.addEventListener("pointerdown",e=>{
-  e.preventDefault();keys[key]=true;
-  button.setPointerCapture(e.pointerId);
- });
- ["pointerup","pointercancel","lostpointercapture"].forEach(eventName=>{
-  button.addEventListener(eventName,()=>keys[key]=false);
+addEventListener('keydown',e=>{
+ const k=e.key.toLowerCase();
+
+ if(keymap[k]){
+  keys[keymap[k]]=true;
+  e.preventDefault();
+ }
+
+ if((k===' '||k==='enter')&&!active){
+  start();
+  e.preventDefault();
+ }
+},{passive:false});
+
+addEventListener('keyup',e=>{
+ const k=e.key.toLowerCase();
+ if(keymap[k])keys[keymap[k]]=false;
+});
+
+addEventListener('blur',()=>{
+ Object.keys(keys).forEach(k=>keys[k]=false);
+});
+
+// Nút trên màn hình: nhấn giữ để điều khiển
+document.querySelectorAll('[data-k]').forEach(b=>{
+ const k=b.dataset.k;
+
+ const down=e=>{
+  e.preventDefault();
+  keys[k]=true;
+  if(!active)start();
+ };
+
+ const up=e=>{
+  e.preventDefault();
+  keys[k]=false;
+ };
+
+ b.addEventListener('pointerdown',down);
+ ['pointerup','pointercancel','pointerleave'].forEach(ev=>{
+  b.addEventListener(ev,up);
  });
 });
-document.addEventListener("visibilitychange",()=>{keys={}});
+
+el('start').addEventListener('click',start);
+el('restart').addEventListener('click',reset);
+
+el('brake').addEventListener('pointerdown',e=>{
+ e.preventDefault();
+ keys.down=true;
+});
+
+['pointerup','pointercancel','pointerleave'].forEach(ev=>{
+ el('brake').addEventListener(ev,()=>keys.down=false);
+});
+
+stats();
+draw();
+})();
 </script>
 </body>
 </html>
-
